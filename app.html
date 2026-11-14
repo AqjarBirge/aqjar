@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aqjar AI — Цифровой гид района</title>
+<style>
+:root{--bg:linear-gradient(-45deg,#0f172a,#1e1b4b,#064e3b,#111827);--gl:rgba(15,23,42,.88);--cd:rgba(30,41,59,.92);--tx:#f1f5f9;--mt:#94a3b8;--bd:rgba(255,255,255,.14);--in:#1e293b;--ac:#14b8a6;--sf:rgba(20,184,166,.22)}
+body.light{--bg:linear-gradient(-45deg,#a7f3d0,#bae6fd,#99f6e4,#e0f2fe);--gl:rgba(255,255,255,.88);--cd:rgba(255,255,255,.95);--tx:#1e293b;--mt:#64748b;--bd:rgba(255,255,255,.8);--in:#f8fafc;--ac:#0d9488;--sf:#ccfbf1}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif}
+body{width:100vw;height:100vh;overflow:hidden;display:flex;color:var(--tx);background:var(--bg);background-size:400% 400%;animation:bg 8s ease infinite}
+@supports(height:100dvh){body,.main{height:100dvh}}
+@keyframes bg{0%{background-position:0 50%}50%{background-position:100% 50%}100%{background-position:0 50%}}
+.hide{display:none}
+.side{width:240px;background:var(--gl);backdrop-filter:blur(10px);border-right:1px solid var(--bd);display:flex;flex-direction:column;justify-content:space-between;padding:18px 12px;flex-shrink:0}
+.brand{font-size:22px;font-weight:800;color:var(--ac);margin-bottom:4px}
+.sub{font-size:12px;color:var(--mt);padding-bottom:12px;border-bottom:1px solid var(--bd)}
+.menu{display:flex;flex-direction:column;gap:6px;margin-top:14px}
+.tbtn{display:block;padding:10px 12px;border-radius:12px;color:var(--mt);font-size:13px;font-weight:600;cursor:pointer}
+#r1:checked~.side label[for="r1"],#r2:checked~.side label[for="r2"],#r3:checked~.side label[for="r3"],#r4:checked~.side label[for="r4"]{background:var(--ac);color:#fff}
+.badge{background:var(--cd);border:1px solid var(--bd);padding:10px;border-radius:10px;font-size:11px;color:var(--mt)}
+.main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;position:relative}
+.top{background:var(--gl);border-bottom:1px solid var(--bd);padding:12px 20px;display:flex;justify-content:space-between;align-items:center}
+.inbtn{display:none;background:#f59e0b;color:#fff;border:none;padding:7px 12px;border-radius:16px;font-size:12px;font-weight:700;cursor:pointer}
+.inbtn.show{display:inline-block}
+.gear{background:var(--cd);border:1px solid var(--bd);color:var(--tx);width:36px;height:36px;border-radius:50%;font-size:16px;cursor:pointer}
+.pop{display:none;position:absolute;top:58px;right:20px;width:255px;background:var(--cd);border:1px solid var(--bd);border-radius:14px;padding:14px;box-shadow:0 10px 25px rgba(0,0,0,.35);z-index:99;flex-direction:column;gap:12px}
+.pop.open{display:flex}
+.row{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:600}
+.sw{width:40px;height:20px;background:#475569;border-radius:20px;border:none;position:relative;cursor:pointer}
+.sw::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:.2s}
+.sw.on{background:var(--ac)}.sw.on::after{left:22px}
+.adm{display:none;gap:6px}.adm.open{display:flex}
+.adm input{flex:1;background:var(--in);color:var(--tx);border:1px solid var(--bd);border-radius:8px;padding:6px 8px;font-size:12px;outline:none}
+.pnl{display:none;flex:1;flex-direction:column;overflow:hidden}
+#r1:checked~.main #p1,#r2:checked~.main #p2,#r3:checked~.main #p3,#r4:checked~.main #p4{display:flex}
+.chat{flex:1;padding:16px 20px;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:75%;padding:11px 15px;border-radius:16px;font-size:14px;line-height:1.4}
+.bot{background:var(--cd);border:1px solid var(--bd);align-self:flex-start}
+.user{background:var(--ac);color:#fff;align-self:flex-end}
+.sug{background:var(--gl);padding:8px 20px;border-top:1px solid var(--bd);display:flex;gap:8px;overflow-x:auto}
+.chip{background:var(--cd);border:1px solid var(--bd);color:var(--ac);padding:6px 12px;border-radius:14px;font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer}
+.ibar{background:var(--gl);padding:10px 20px;display:flex;gap:8px;border-top:1px solid var(--bd)}
+.ibar input{background:var(--in);color:var(--tx);border:1px solid var(--bd);border-radius:20px;padding:10px 14px;outline:none;font-size:14px}
+.ibar button{background:var(--ac);color:#fff;border:none;width:40px;height:40px;border-radius:50%;cursor:pointer;flex-shrink:0}
+.cards{padding:20px;overflow-y:auto;flex:1}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:12px}
+.card{background:var(--cd);border:1px solid var(--bd);border-radius:14px;padding:14px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.card h3{font-size:14px;margin-bottom:3px}.card p{font-size:12px;color:var(--mt)}
+.ph{font-size:13px;font-weight:700;color:var(--ac);margin-top:4px;display:inline-block;cursor:pointer;padding:2px 7px;background:var(--sf);border-radius:6px}
+.btn{background:var(--sf);color:var(--ac);border:none;padding:7px 12px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
+.btn:hover,.ph:hover{background:var(--ac);color:#fff}
+.iitem{background:var(--cd);border:1px solid var(--bd);border-radius:14px;padding:12px 15px;display:flex;flex-direction:column;gap:6px;max-width:85%}
+.ihead{display:flex;justify-content:space-between;gap:12px;font-size:12px;color:var(--mt)}
+.stw{background:#fef3c7;color:#b45309;padding:2px 8px;border-radius:8px;font-weight:700}
+.sto{background:#d1fae5;color:#047857;padding:2px 8px;border-radius:8px;font-weight:700}
+.stn{background:#fee2e2;color:#b91c1c;padding:2px 8px;border-radius:8px;font-weight:700}
+.mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;align-items:center;justify-content:center;padding:14px}
+.mbg.open{display:flex}
+.mdl{background:var(--cd);color:var(--tx);border:1px solid var(--bd);border-radius:16px;max-width:440px;width:100%;padding:18px;display:flex;flex-direction:column;gap:10px;max-height:85vh;overflow-y:auto}
+.toast{position:fixed;bottom:70px;right:20px;background:#10b981;color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:700;z-index:999;display:none}
+.akzhar-head{display:flex;justify-content:space-between;align-items:center;margin:24px 0 12px;gap:10px}
+.akzhar-row{display:flex;gap:14px;overflow-x:auto;padding:4px 4px 16px;cursor:grab;user-select:none;scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
+.akzhar-row.dragging{cursor:grabbing;scroll-behavior:auto}
+.akzhar-row::-webkit-scrollbar{height:6px}
+.akzhar-row::-webkit-scrollbar-thumb{background:var(--sf);border-radius:10px}
+.akzhar-slide{min-width:265px;max-width:265px;height:260px;flex-shrink:0;display:flex;flex-direction:column;justify-content:space-between;border-radius:20px;color:#fff;padding:18px;position:relative;overflow:hidden;box-shadow:0 10px 24px rgba(0,0,0,.28);transition:transform .15s ease-out}
+.glare{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at var(--x,50%) var(--y,50%),rgba(255,255,255,.42) 0%,rgba(255,255,255,.1) 40%,transparent 70%);mix-blend-mode:overlay;opacity:0;transition:opacity .2s}
+.akzhar-slide:hover .glare{opacity:1}
+.card-badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;background:rgba(255,255,255,.22);padding:4px 10px;border-radius:14px;align-self:flex-start}
+.card-title{font-size:16px;font-weight:700;line-height:1.2;margin-bottom:4px}
+.card-number{font-size:34px;font-weight:800;line-height:1;margin-bottom:6px;cursor:pointer;display:inline-block}
+.card-extra{font-size:12px;line-height:1.4;opacity:.95}
+.card-extra strong{cursor:pointer;text-decoration:underline dotted;padding:0 2px}
+.card-footer{font-size:11px;opacity:.85;border-top:1px solid rgba(255,255,255,.25);padding-top:8px}
+.bg-hospital{background:linear-gradient(135deg,#0ba360,#3cba92)}
+.bg-police{background:linear-gradient(135deg,#1e3c72,#2a5298)}
+.bg-school{background:linear-gradient(135deg,#f7971e,#ffd200);color:#1f1f1f}
+.bg-school .card-badge{background:rgba(0,0,0,.1)}
+.bg-school .card-footer{border-color:rgba(0,0,0,.15)}
+.bg-ses{background:linear-gradient(135deg,#00b4db,#0083b0)}
+.bg-res{background:linear-gradient(135deg,#ff8008,#ffc837);color:#1f1f1f}
+.bg-res .card-badge{background:rgba(0,0,0,.1)}
+.bg-res .card-footer{border-color:rgba(0,0,0,.15)}
+.bg-fire{background:linear-gradient(135deg,#eb3349,#f45c43)}
+.bg-telecom{background:linear-gradient(135deg,#4776e6,#8e54e9)}
+</style>
+<style>
+  .leaflet-control-attribution svg {
+    display: none !important;
+  }
+</style>
+</head>
+<body>
+<input type="radio" name="t" id="r1" class="hide" checked>
+<input type="radio" name="t" id="r2" class="hide">
+<input type="radio" name="t" id="r3" class="hide">
+<input type="radio" name="t" id="r4" class="hide">
+
+<aside class="side">
+  <div>
+    <div class="brand">🧭 Aqjar AI</div>
+    <div class="sub" data-ru="Гид с. Талшык и Акжарского района" data-kz="Талшық а. және Ақжар ауданы гиді">Гид с. Талшык и Акжарского района</div>
+    <nav class="menu">
+      <label for="r1" class="tbtn" data-ru="🤖 ИИ-Гид" data-kz="🤖 ЖИ-Гид">🤖 ИИ-Гид</label>
+      <label for="r2" class="tbtn" data-ru="📖 Справочник" data-kz="📖 Анықтамалық">📖 Справочник</label>
+      <label for="r3" class="tbtn" data-ru="🏢 Организации" data-kz="🏢 Ұйымдар">🏢 Организации</label>
+      <label for="r4" class="tbtn" data-ru="💡 Предложения" data-kz="💡 Ұсыныстар">💡 Предложения</label>
+    </nav>
+  </div>
+  <div class="badge"><b>DIGITAL AIMAQ</b><br><span data-ru="СКО, Акжарский район" data-kz="СҚО, Ақжар ауданы">СКО, Акжарский район</span></div>
+</aside>
+
+<main class="main">
+  <header class="top">
+    <div><b style="font-size:16px">Aqjar AI</b> <span style="font-size:12px;color:var(--ac)" data-ru="● с. Талшык" data-kz="● Талшық а.">● с. Талшык</span></div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button type="button" id="inBtn" class="inbtn" onclick="openIn()">📥 <span data-ru="Входящие заявки" data-kz="Кіріс өтінімдер">Входящие заявки</span> (<span id="wCnt">0</span>)</button>
+      <button type="button" class="gear" onclick="document.getElementById('pop').classList.toggle('open')">⚙️</button>
+    </div>
+  </header>
+
+  <div id="pop" class="pop">
+    <div class="row"><span data-ru="☀️ Светлая тема" data-kz="☀️ Жарық режим">☀️ Светлая тема</span><button type="button" class="sw" onclick="document.body.classList.toggle('light');this.classList.toggle('on')"></button></div>
+    <div class="row"><span>🌐 Рус / Қаз</span><button type="button" id="swL" class="sw" onclick="setL()"></button></div>
+    <div class="row"><span data-ru="🛡️ Режим администратора" data-kz="🛡️Администратор режимі">🛡️ Режим администратора</span><button type="button" id="swA" class="sw" onclick="setA()"></button></div>
+    <div id="admBox" class="adm"><input type="password" id="admP" placeholder="Пароль" onkeydown="if(event.key==='Enter')logA()"><button type="button" class="btn" onclick="logA()">OK</button></div>
+  </div>
+
+  <section id="p1" class="pnl">
+    <div class="chat" id="cbox"><p class="msg bot" data-ru="Сәлем! 👋 Я Aqjar AI — ваш помощник по с. Талшык и Акжарскому району." data-kz="Сәлем! 👋 Мен Aqjar AI — Талшық ауылы мен Ақжар ауданы бойынша көмекшімін.">Сәлем! 👋 Я Aqjar AI — ваш помощник по с. Талшык и Акжарскому району.</p></div>
+    <div class="sug">
+      <button type="button" class="chip" onclick="qAsk(this.textContent)" data-ru="🏛️ Акимат Акжарского района" data-kz="🏛️ Ақжар ауданының әкімдігі">🏛️ Акимат Акжарского района</button>
+      <button type="button" class="chip" onclick="qAsk(this.textContent)" data-ru="💼 Карьерный Центр" data-kz="💼 Мансап орталығы">💼 Карьерный Центр</button>
+      <button type="button" class="chip" onclick="qAsk(this.textContent)" data-ru="📞 Экстренные службы" data-kz="📞 Шұғыл қызметтер">📞 Экстренные службы</button>
+    </div>
+    <div class="ibar"><input type="text" id="inp" style="flex:1" placeholder="Напишите вопрос..." onkeydown="if(event.key==='Enter')send()"><button type="button" onclick="send()">➤</button></div>
+  </section>
+  <section id="p2" class="pnl">
+    <div class="cards">
+      <h2 data-ru="Важные службы с. Талшык" data-kz="Талшық ауылының маңызды қызметтері">Важные службы с. Талшык</h2>
+      <div class="grid">
+        <div class="card"><div><h3 data-ru="Служба спасения" data-kz="Құтқару қызметі">Служба спасения</h3><p>24/7</p><span class="ph" onclick="cp('112')">112 📋</span></div><button type="button" class="btn" onclick="cp('112')" data-ru="Скопировать" data-kz="Көшіру">Скопировать</button></div>
+        <div class="card"><div><h3 data-ru="Скорая помощь" data-kz="Жедел жәрдем">Скорая помощь</h3><p data-ru="с. Талшык" data-kz="Талшық а.">с. Талшык</p><span class="ph" onclick="cp('103')">103 📋</span></div><button type="button" class="btn" onclick="cp('103')" data-ru="Скопировать" data-kz="Көшіру">Скопировать</button></div>
+        <div class="card"><div><h3 data-ru="Акимат Акжарского района" data-kz="Ақжар ауданының әкімдігі">Акимат Акжарского района</h3><p data-ru="улица Целинная, 15" data-kz="Целинная көшесі, 15">улица Целинная, 15</p><span class="ph" onclick="cp('+77154621130')">+77154621130 📋</span></div><button type="button" class="btn" onclick="cp('+77154621130')" data-ru="Скопировать" data-kz="Көшіру">Скопировать</button></div>
+        <div class="card"><div><h3 data-ru="ЦОН" data-kz="ХҚКО">ЦОН</h3><p>09:00–18:00</p><span class="ph" onclick="cp('1414')">1414 📋</span></div><button type="button" class="btn" onclick="cp('1414')" data-ru="Скопировать" data-kz="Көшіру">Скопировать</button></div>
+      </div>
+
+      <div class="akzhar-head">
+        <div>
+          <h2 style="font-size:18px" data-ru="Службы Акжарского района" data-kz="Ақжар ауданының қызметтері">Службы Акжарского района</h2>
+          <span style="font-size:12px;color:var(--mt)" data-ru="Листайте влево/вправо • Нажмите на номер для копирования" data-kz="Солға/оңға сырғытыңыз • Көшіру үшін нөмірді басыңыз">Листайте влево/вправо • Нажмите на номер для копирования</span>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button type="button" class="btn" onclick="document.getElementById('akRow').scrollBy({left:-280,behavior:'smooth'})">◀</button>
+          <button type="button" class="btn" onclick="document.getElementById('akRow').scrollBy({left:280,behavior:'smooth'})">▶</button>
+        </div>
+      </div>
+
+      <div class="akzhar-row" id="akRow">
+        <div class="akzhar-slide bg-hospital">
+          <div class="glare"></div>
+          <span class="card-badge" data-ru="Здравоохранение" data-kz="Денсаулық сақтау">Здравоохранение</span>
+          <div>
+            <div class="card-title" data-ru="Акжарская районная больница" data-kz="Ақжар аудандық ауруханасы">Акжарская районная больница</div>
+            <div class="card-number" onclick="cp('103')">103</div>
+            <div class="card-extra">
+              <span data-ru="Приёмный покой:" data-kz="Қабылдау бөлімі:">Приёмный покой:</span> <strong onclick="cp('87154621096')">21-096</strong><br>
+              <span data-ru="Регистратура:" data-kz="Тіркеу орны:">Регистратура:</span> <strong onclick="cp('87154679997')">79-997</strong><br>
+              <span data-ru="Колл-центр:" data-kz="Колл-орталық:">Колл-центр:</span> <strong onclick="cp('87154640000')">40-000</strong>
+            </div>
+          </div>
+          <div class="card-footer" data-ru="с. Талшык, ул. М. Ауэзова, 19" data-kz="Талшық а., М. Әуезов к-сі, 19">с. Талшык, ул. М. Ауэзова, 19</div>
+        </div>
+
+        <div class="akzhar-slide bg-police">
+          <div class="glare"></div>
+          <span class="card-badge" data-ru="Правопорядок" data-kz="Құқықтық тәртіп">Правопорядок</span>
+          <div>
+            <div class="card-title" data-ru="РОВД Акжарского района" data-kz="Ақжар ауданының АПБ">РОВД Акжарского района</div>
+            <div class="card-number" onclick="cp('102')">102</div>
+            <div class="card-extra" data-ru="Дежурная часть полиции (24/7)" data-kz="Полицияның кезекші бөлімі (24/7)">Дежурная часть полиции (24/7)</div>
+          </div>
+          <div class="card-footer" data-ru="с. Талшык (код 8-715-46)" data-kz="Талшық а. (код 8-715-46)">с. Талшык (код 8-715-46)</div>
+        </div>
+
+        <div class="akzhar-slide bg-school">
+          <div class="glare"></div>
+          <span class="card-badge" data-ru="Образование" data-kz="Білім беру">Образование</span>
+          <div>
+            <div class="card-title" data-ru="Отдел образования и школы" data-kz="Білім бөлімі және мектептер">Отдел образования и школы</div>
+            <div class="card-number" onclick="cp('1450')">1450</div>
+            <div class="card-extra">
+              <span data-ru="Приёмная отдела:" data-kz="Бөлім қабылдауы:">Приёмная отдела:</span> <strong onclick="cp('87154679113')">79-113</strong><br>
+              <span data-ru="Единый колл-центр:" data-kz="Бірыңғай колл-орталық:">Единый колл-центр:</span> <strong onclick="cp('1450')">1450</strong>
+            </div>
+          </div>
+          <div class="card-footer" data-ru="с. Талшык, ул. Целинная, 11" data-kz="Талшық а., Целинная к-сі, 11">с. Талшык, ул. Целинная, 11</div>
+        </div>
+
+        <div class="akzhar-slide bg-ses">
+          <div class="glare"></div>
+          <span class="card-badge" data-ru="Санэпидконтроль" data-kz="Санэпидбақылау">Санэпидконтроль</span>
+          <div>
+            <div class="card-title" data-ru="Районное управление СЭС" data-kz="Аудандық СЭС басқармасы">Районное управление СЭС</div>
+            <div class="card-number">СЭС</div>
+            <div class="card-extra" data-ru="Санитарно-эпидемиологический контроль" data-kz="Санитариялық-эпидемиологиялық бақылау">Санитарно-эпидемиологический контроль</div>
+          </div>
+          <div class="card-footer" data-ru="с. Талшык, ул. Абылай хана, 7" data-kz="Талшық а., Абылай хан к-сі, 7">с. Талшык, ул. Абылай хана, 7</div>
+        </div>
+
+        <div class="akzhar-slide bg-res">
+          <div class="glare"></div>
+          <span class="card-badge" data-ru="Электросети" data-kz="Электр желілері">Электросети</span>
+          <div>
+            <div class="card-title" data-ru="Акжарский РЭС" data-kz="Ақжар АЭЖ">Акжарский РЭС</div>
+            <div class="card-number" onclick="cp('154')">154</div>
+            <div class="card-extra">
+              <span data-ru="Аварийная электросетей:" data-kz="Электр желілерінің апаттық қызметі:">Аварийная электросетей:</span> <strong onclick="cp('154')">154</strong><br>
+              <span data-ru="Единая служба iKomek:" data-kz="Бірыңғай iKomek қызметі:">Единая служба iKomek:</span> <strong onclick="cp('109')">109</strong>
+            </div>
+          </div>
+          <div class="card-footer" data-ru="Диспетчерская служба района" data-kz="Аудандық диспетчерлік қызмет">Диспетчерская служба района</div>
+        </div>
+
+        <div class="akzhar-slide bg-fire">
+          <div class="glare"></div>
+          <span class="card-badge" data-ru="Служба ЧС" data-kz="ТЖ қызметі">Служба ЧС</span>
+          <div>
+            <div class="card-title" data-ru="Пожарная охрана и ЧС" data-kz="Өрт сөндіру және ТЖ">Пожарная охрана и ЧС</div>
+            <div class="card-number" onclick="cp('101')">101</div>
+            <div class="card-extra">
+              <span data-ru="Пожарная часть:" data-kz="Өрт сөндіру бөлімі:">Пожарная часть:</span> <strong onclick="cp('101')">101</strong><br>
+              <span data-ru="Единый номер спасения:" data-kz="Бірыңғай құтқару нөмірі:">Единый номер спасения:</span> <strong onclick="cp('112')">112</strong>
+            </div>
+          </div>
+          <div class="card-footer" data-ru="Круглосуточная экстренная помощь" data-kz="Тәулік бойы шұғыл көмек">Круглосуточная экстренная помощь</div>
+        </div>
+
+        <div class="akzhar-slide bg-telecom">
+          <div class="glare"></div>
+          <span class="card-badge" data-ru="Связь и интернет" data-kz="Байланыс және интернет">Связь и интернет</span>
+          <div>
+            <div class="card-title" data-ru="Казахтелеком" data-kz="Қазақтелеком">Казахтелеком</div>
+            <div class="card-number" onclick="cp('160')">160</div>
+            <div class="card-extra">
+              <span data-ru="Контакт-центр:" data-kz="Байланыс орталығы:">Контакт-центр:</span> <strong onclick="cp('160')">160</strong><br>
+              <span data-ru="Бюро ремонта:" data-kz="Жөндеу бюросы:">Бюро ремонта:</span> <strong onclick="cp('165')">165</strong>
+            </div>
+          </div>
+          <div class="card-footer" data-ru="с. Талшык, ул. Целинная, 22" data-kz="Талшық а., Целинная к-сі, 22">с. Талшык, ул. Целинная, 22</div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="p3" class="pnl">
+    <div class="cards"><h2 data-ru="Государственные организации" data-kz="Мемлекеттік ұйымдар">Государственные организации</h2>
+      <div class="grid">
+        <div class="card"><div><h3 data-ru="Акимат Акжарского района" data-kz="Ақжар ауданының әкімдігі">Акимат Акжарского района</h3><p data-ru="улица Целинная, 15" data-kz="Целинная көшесі, 15">улица Целинная, 15</p></div><button type="button" class="btn" onclick="info(0)" data-ru="Узнать" data-kz="Білу">Узнать</button></div>
+        <div class="card"><div><h3 data-ru="Карьерный Центр" data-kz="Мансап орталығы">Карьерный Центр</h3><p data-ru="улица Целинная, 15А" data-kz="Целинная көшесі, 15А">улица Целинная, 15А</p></div><button type="button" class="btn" onclick="info(1)" data-ru="Узнать" data-kz="Білу">Узнать</button></div>
+        <div class="card"><div><h3 data-ru="Отдел образования Акжарского района" data-kz="Ақжар ауданының білім бөлімі">Отдел образования Акжарского района</h3><p data-ru="улица Целинная, 11" data-kz="Целинная көшесі, 11">улица Целинная, 11</p></div><button type="button" class="btn" onclick="info(2)" data-ru="Узнать" data-kz="Білу">Узнать</button></div>
+        <div class="card"><div><h3 data-ru="Акжарский районный архив" data-kz="Ақжар аудандық архиві">Акжарский районный архив</h3><p data-ru="с. Талшык, ул. Целинная, 15" data-kz="Талшық а., Целинная көшесі, 15">с. Талшык, ул. Целинная, 15</p></div><button type="button" class="btn" onclick="info(3)" data-ru="Узнать" data-kz="Білу">Узнать</button></div>
+        <div class="card"><div><h3 data-ru="Отдел ветеринарии Акжарского района" data-kz="Ақжар ауданының ветеринария бөлімі">Отдел ветеринарии Акжарского района</h3><p data-ru="с. Талшык, ул. Абылай хана, 5" data-kz="Талшық а., Абылай хан көшесі, 5">с. Талшык, ул. Абылай хана, 5</p></div><button type="button" class="btn" onclick="info(4)" data-ru="Узнать" data-kz="Білу">Узнать</button></div>
+        <div class="card"><div><h3 data-ru="Районное управление СЭС" data-kz="Аудандық СЭС басқармасы">Районное управление СЭС</h3><p data-ru="с. Талшык, ул. Абылай хана, 7" data-kz="Талшық а., Абылай хан көшесі, 7">с. Талшык, ул. Абылай хана, 7</p></div><button type="button" class="btn" onclick="info(6)" data-ru="Узнать" data-kz="Білу">Узнать</button></div>
+        <div class="card"><div><h3 data-ru="Районное казначейство" data-kz="Аудандық қазынашылық">Районное казначейство</h3><p data-ru="с. Талшык (в одном здании с управлением СЭС и отделом статистики)" data-kz="Талшық а. (СЭС басқармасы және статистика бөлімімен бір ғимаратта)">с. Талшык (в одном здании с управлением СЭС и отделом статистики)</p></div><button type="button" class="btn" onclick="info(7)" data-ru="Узнать" data-kz="Білу">Узнать</button></div>
+        <div class="card"><div><h3 data-ru="Отдел статистики" data-kz="Статистика бөлімі">Отдел статистики</h3><p data-ru="с. Талшык (в одном здании с казначейством)" data-kz="Талшық а. (қазынашылықпен бір ғимаратта)">с. Талшык (в одном здании с казначейством)</p></div><button type="button" class="btn" onclick="info(8)" data-ru="Узнать" data-kz="Білу">Узнать</button></div>
+        <div class="card"><div><h3 data-ru="Талшыкская средняя школа (ТСШ)" data-kz="Талшық орта мектебі (ТОМ)">Талшыкская средняя школа (ТСШ)</h3><p data-ru="с. Талшык" data-kz="Талшық а.">с. Талшык</p></div><button type="button" class="btn" onclick="info(9)" data-ru="Узнать" data-kz="Білу">Узнать</button></div>
+        <div class="card"><div><h3 data-ru="Бестерекская средняя школа (БСШ)" data-kz="Бестерек орта мектебі (БОМ)">Бестерекская средняя школа (БСШ)</h3><p data-ru="с. Талшык" data-kz="Талшық а.">с. Талшык</p></div><button type="button" class="btn" onclick="info(10)" data-ru="Узнать" data-kz="Білу">Узнать</button></div>
+        <div class="card"><div><h3 data-ru="Отдел занятости и социальных программ" data-kz="Жұмыспен қамту және әлеуметтік бағдарламалар бөлімі">Отдел занятости и социальных программ</h3><p data-ru="с. Талшык, ул. Целинная, 15" data-kz="Талшық а., Целинная көшесі, 15">с. Талшык, ул. Целинная, 15</p></div><button type="button" class="btn" onclick="info(5)" data-ru="Узнать" data-kz="Білу">Узнать</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="p4" class="pnl">
+    <div class="chat" id="iList"></div>
+    <div class="ibar"><input type="text" id="iName" style="width:120px" placeholder="Имя"><input type="text" id="iText" style="flex:1" placeholder="Предложение..." onkeydown="if(event.key==='Enter')addI()"><button type="button" onclick="addI()">➤</button></div>
+  </section>
+</main>
+
+<div id="mInf" class="mbg" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="mdl"><h3 id="mt" style="color:var(--ac)"></h3><div id="mb" style="font-size:14px;line-height:1.5"></div><button type="button" class="btn" onclick="document.getElementById('mInf').classList.remove('open')" data-ru="Закрыть" data-kz="Жабу">Закрыть</button></div>
+</div>
+
+<div id="mAdm" class="mbg" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="mdl">
+    <div style="display:flex;justify-content:space-between;align-items:center"><h3 style="color:var(--ac)" data-ru="📥 Входящие заявки" data-kz="📥 Кіріс өтінімдер">📥 Входящие заявки</h3><button type="button" class="btn" onclick="document.getElementById('mAdm').classList.remove('open')">✕</button></div>
+    <div id="aList" style="display:flex;flex-direction:column;gap:10px"></div>
+  </div>
+</div>
+<div id="tst" class="toast"></div>
+<script>
+let lang = "ru";
+let adm = false;
+const DEF_IDEAS = [
+  { n: "Айгерим", t: "Добавить расписание приёма граждан в Акимате", s: "o" },
+  { n: "Даулет", t: "Добавить список документов для гранта в Карьерном Центре", s: "w" }
+];
+let ideas = DEF_IDEAS;
+try {
+  const s = JSON.parse(localStorage.getItem("aqjar_v20"));
+  if (Array.isArray(s) && s.length > 0) ideas = s;
+} catch (e) {}
+
+const INF = [
+  { rt: "Акимат Акжарского района • ул. Целинная, 15", rb: "Местный исполнительный орган. Личный приём граждан, вопросы ЖКХ, благоустройства, земельных отношений и сельского хозяйства. Тел.: +7 (705) 657-13-47. График: Пн–Пт 09:00–18:30.", kt: "Ақжар ауданының әкімдігі • Целинная к-сі, 15", kb: "Жергілікті атқарушы орган. Азаматтарды жеке қабылдау, ТКШ, жер қатынастары және ауыл шаруашылығы мәселелері. Тел.: +7 (705) 657-13-47. Дс–Жм 09:00–18:30." },
+  { rt: "Карьерный Центр • ул. Целинная, 15А", rb: "Поиск работы и профориентация, программы «Молодёжная практика», «Первое рабочее место», «Серебряный возраст» и консультации по госгрантам на бизнес до 400 МРП.", kt: "Мансап орталығы • Целинная к-сі, 15А", kb: "Жұмыс іздеу, «Жастар практикасы», «Алғашқы жұмыс орны», «Күміс жас» бағдарламалары және 400 АЕК дейінгі мемлекеттік гранттар бойынша кеңес беру." },
+  { rt: "Отдел образования Акжарского района • ул. Целинная, 11", rb: "Координация школ и детских садов района. Постановка в очередь в детсад, приём документов в 1 класс, опека и попечительство. Приёмная: +7 (71546) 7-91-13, колл-центр: 1450.", kt: "Ақжар ауданының білім бөлімі • Целинная к-сі, 11", kb: "Аудан мектептері мен балабақшаларының жұмысын үйлестіру. Балабақша кезегіне қою, 1-сыныпқа құжат қабылдау, қорғаншылық. Қабылдау: +7 (71546) 7-91-13, колл-орталық: 1450." },
+  { rt: "Акжарский районный архив • с. Талшык, ул. Целинная, 15", rb: "Хранение документов по истории района и личному составу ликвидированных предприятий и совхозов. Выдача архивных справок о трудовом стаже и зарплате для оформления пенсии.", kt: "Ақжар аудандық архиві • Талшық а., Целинная к-сі, 15", kb: "Аудан тарихы мен таратылған кәсіпорындардың жеке құрамы бойынша құжаттарды сақтау. Зейнетақы рәсімдеу үшін еңбек өтілі мен жалақы туралы анықтамалар беру." },
+  { rt: "Отдел ветеринарии Акжарского района • с. Талшык, ул. Абылай хана, 5", rb: "Ветеринарно-санитарная безопасность района. Биркование и чипирование скота, плановая вакцинация, оформление ветпаспортов и справок на перевозку животных и продукции. Тел.: +7 (71546) 7-90-46.", kt: "Ақжар ауданының ветеринария бөлімі • Талшық а., Абылай хан к-сі, 5", kb: "Ветеринариялық-санитариялық қауіпсіздік. Малды сырғалау, жоспарлы вакцинация, ветеринариялық паспорттар мен анықтамалар беру. Тел.: +7 (71546) 7-90-46." },
+  { rt: "Отдел занятости и социальных программ • с. Талшык, ул. Целинная, 15", rb: "Назначение адресной социальной помощи (АСП), жилищной помощи, выплат лицам с инвалидностью, ветеранам и многодетным семьям. Оформление средств реабилитации и санаторного лечения.", kt: "Жұмыспен қамту және әлеуметтік бағдарламалар бөлімі • Талшық а., Целинная к-сі, 15", kb: "Атаулы әлеуметтік көмек (АӘК), тұрғын үй көмегін, мүгедектігі бар адамдарға, ардагерлер мен көпбалалы отбасыларға төлемдер тағайындау." },
+  { rt: "Районное управление СЭС • с. Талшык, ул. Абылай хана, 7", rb: "Санитарно-эпидемиологический контроль и надзор в районе. Санитарные заключения, контроль за соблюдением санитарных норм, профилактика инфекционных заболеваний. Тел.: +7 (71546) 2-19-17.", kt: "Аудандық СЭС басқармасы • Талшық а., Абылай хан к-сі, 7", kb: "Санитариялық-эпидемиологиялық бақылау және қадағалау. Санитариялық қорытындылар, санитариялық нормалардың сақталуын бақылау, жұқпалы аурулардың алдын алу. Тел.: +7 (71546) 2-19-17." },
+  { rt: "Районное казначейство • с. Талшык", rb: "Исполнение бюджета и обслуживание бюджетных платежей. Находится в одном здании с управлением СЭС и отделом статистики.", kt: "Аудандық қазынашылық • Талшық а.", kb: "Бюджетті атқару және бюджеттік төлемдерге қызмет көрсету. СЭС басқармасы және статистика бөлімімен бір ғимаратта орналасқан." },
+  { rt: "Отдел статистики • с. Талшык", rb: "Сбор и публикация официальной статистической информации по району. Находится в одном здании с казначейством и управлением СЭС.", kt: "Статистика бөлімі • Талшық а.", kb: "Аудан бойынша ресми статистикалық ақпаратты жинау және жариялау. Қазынашылық және СЭС басқармасымен бір ғимаратта орналасқан." },
+  { rt: "Талшыкская средняя школа (ТСШ) • с. Талшык", rb: "Общеобразовательная школа села Талшык.", kt: "Талшық орта мектебі (ТОМ) • Талшық а.", kb: "Талшық ауылының жалпы білім беретін мектебі." },
+  { rt: "Бестерекская средняя школа (БСШ)", rb: "Общеобразовательная Бестерекская средняя школа.", kt: "Бестерек орта мектебі (БОМ)", kb: "Бестерек жалпы білім беретін орта мектебі." }
+];
+
+function toast(m) {
+  const t = document.getElementById("tst");
+  if (!t) return;
+  t.textContent = m;
+  t.style.display = "block";
+  setTimeout(function() { t.style.display = "none"; }, 2000);
+}
+
+function cp(v) {
+  const a = document.createElement("input");
+  a.value = v;
+  a.style.cssText = "position:fixed;top:0;left:0;width:10px;height:10px;z-index:-1";
+  document.body.appendChild(a);
+  a.select();
+  try { document.execCommand("copy"); } catch (e) {}
+  document.body.removeChild(a);
+  if (navigator.clipboard) navigator.clipboard.writeText(v).catch(function() {});
+  toast((lang === "ru" ? "✓ Скопировано: " : "✓ Көшірілді: ") + v);
+}
+
+function setL() {
+  lang = (lang === "ru") ? "kz" : "ru";
+  document.getElementById("swL").classList.toggle("on");
+  document.querySelectorAll("[data-ru]").forEach(function(el) { el.textContent = el.getAttribute("data-" + lang); });
+  document.getElementById("inp").placeholder = (lang === "ru") ? "Напишите вопрос..." : "Сұрақ жазыңыз...";
+  document.getElementById("iName").placeholder = (lang === "ru") ? "Имя" : "Есіміңіз";
+  document.getElementById("iText").placeholder = (lang === "ru") ? "Предложение..." : "Ұсыныс...";
+  draw();
+}
+
+function setA() {
+  if (adm) {
+    adm = false;
+    try { sessionStorage.removeItem("aqjar_adm_pass"); } catch (e) {}
+    document.getElementById("swA").classList.remove("on");
+    document.getElementById("inBtn").classList.remove("show");
+    toast(lang === "ru" ? "Админ выключен" : "Админ өшірілді");
+    draw();
+    return;
+  }
+  document.getElementById("admBox").classList.toggle("open");
+  document.getElementById("admP").focus();
+}
+
+async function logA() {
+  const inp = document.getElementById("admP");
+  const pass = inp.value.trim();
+  if (!pass) return;
+  toast(lang === "ru" ? "Проверяю…" : "Тексерілуде…");
+  // пароль проверяет сервер; в коде страницы его нет
+  const ok = (typeof window.aqAdminCheck === "function") ? await window.aqAdminCheck(pass) : false;
+  inp.value = "";
+  if (ok) {
+    try { sessionStorage.setItem("aqjar_adm_pass", pass); } catch (e) {}
+    adm = true;
+    document.getElementById("swA").classList.add("on");
+    document.getElementById("inBtn").classList.add("show");
+    document.getElementById("admBox").classList.remove("open");
+    document.getElementById("pop").classList.remove("open");
+    toast(lang === "ru" ? "✓ Режим админа включён" : "✓ Админ режимі қосылды");
+    if (typeof syncCloudNow === "function") syncCloudNow();
+    draw();
+  } else {
+    toast(lang === "ru" ? "❌ Неверный пароль" : "❌ Құпиясөз қате");
+  }
+}
+
+function info(i) {
+  const d = INF.at(i);
+  if (!d) return;
+  document.getElementById("mt").textContent = (lang === "ru") ? d.rt : d.kt;
+  document.getElementById("mb").textContent = (lang === "ru") ? d.rb : d.kb;
+  document.getElementById("mInf").classList.add("open");
+}
+
+function addI() {
+  const n = document.getElementById("iName").value.trim() || (lang === "ru" ? "Житель" : "Тұрғын");
+  const t = document.getElementById("iText").value.trim();
+  if (!t) return;
+  ideas.push({ n: n, t: t, s: "w" });
+  localStorage.setItem("aqjar_v20", JSON.stringify(ideas));
+  document.getElementById("iText").value = "";
+  draw();
+  const box = document.getElementById("iList");
+  box.scrollTop = box.scrollHeight;
+}
+
+function setS(i, s) {
+  const item = ideas.at(i);
+  if (item) item.s = s;
+  localStorage.setItem("aqjar_v20", JSON.stringify(ideas));
+  draw();
+}
+
+function delI(i) {
+  ideas.splice(i, 1);
+  localStorage.setItem("aqjar_v20", JSON.stringify(ideas));
+  toast(lang === "ru" ? "🗑 Удалено" : "🗑 Жойылды");
+  draw();
+}
+
+function openIn() {
+  draw();
+  document.getElementById("mAdm").classList.add("open");
+}
+
+function draw() {
+  const b = document.getElementById("iList");
+  const a = document.getElementById("aList");
+  if (!b || !a) return;
+  b.innerHTML = "";
+  a.innerHTML = "";
+  let w = 0;
+  const r = (lang === "ru");
+  ideas.forEach(function(x, i) {
+    if (x.s === "w") w++;
+    const st = x.s === "o" ? (r ? "✅ Одобрено" : "✅ Мақұлданды") : (x.s === "n" ? (r ? "❌ Отклонено" : "❌ Қабылданбады") : (r ? "⏳ На рассмотрении" : "⏳ Қаралуда"));
+    const cl = x.s === "o" ? "sto" : (x.s === "n" ? "stn" : "stw");
+    const bt = adm ? '<div style="display:flex;gap:8px;margin-top:4px"><button type="button" class="btn" style="background:#d1fae5;color:#047857" onclick="setS(' + i + ',\'o\')">' + (r ? "Одобрить" : "Мақұлдау") + '</button><button type="button" class="btn" style="background:#fee2e2;color:#b91c1c" onclick="setS(' + i + ',\'n\')">' + (r ? "Отклонить" : "Қабылдамау") + '</button><button type="button" class="btn" style="background:#e2e8f0;color:#334155" onclick="delI(' + i + ')">' + (r ? "🗑 Удалить" : "🗑 Жою") + '</button></div>' : "";
+    const h = '<div class="iitem"><div class="ihead"><b>👤 ' + x.n + '</b><span class="' + cl + '">' + st + '</span></div><div style="font-size:14px">' + x.t + '</div>' + bt + '</div>';
+    b.innerHTML += h;
+    a.innerHTML += h;
+  });
+  const cnt = document.getElementById("wCnt");
+  if (cnt) cnt.textContent = w;
+}
+
+draw();
+</script>
+<script>
+
+function qAsk(q) {
+  document.getElementById("inp").value = q;
+  send();
+}
+
+function add(t, w) {
+  const b = document.getElementById("cbox");
+  const p = document.createElement("p");
+  p.className = "msg " + w;
+  p.innerHTML = t.replace(/\n/g, "<br>");
+  b.appendChild(p);
+  b.scrollTop = b.scrollHeight;
+  return p;
+}
+
+async function send() {
+  const i = document.getElementById("inp");
+  const t = i.value.trim();
+  if (!t) return;
+  add(t, "user");
+  i.value = "";
+  const m = add("...", "bot");
+  if (!GROQ_API_KEY || GROQ_API_KEY === "ВАШ_КЛЮЧ_GROQ") {
+    setTimeout(function() { m.innerHTML = "⚙️ <b>Демо:</b> «" + t + "». Вставьте ключ от Groq в <code>GROQ_API_KEY</code>."; }, 300);
+    return;
+  }
+  try {
+    const base = "https://" + ["api", "groq", "com"].join(".") + "/openai/v1";
+    const hdr = { "Content-Type": "application/json", "Authorization": "Bearer " + GROQ_API_KEY };
+    const mRes = await fetch(base + "/models", { headers: hdr });
+    const mData = await mRes.json();
+    if (mData.error) { m.innerHTML = "Ошибка ключа: " + mData.error.message; return; }
+    const list = (mData.data || []).map(function(x) { return x.id; }).filter(function(id) { return !id.includes("whisper") && !id.includes("guard") && !id.includes("tts") && !id.includes("embed"); });
+    const chosen = list.find(function(id) { return id.includes("70b") || id.includes("120b") || id.includes("32b") || id.includes("llama"); }) || list.at(0);
+    if (!chosen) { m.innerHTML = "Нет доступных текстовых моделей в аккаунте Groq."; return; }
+    const r = await fetch(base + "/chat/completions", {
+      method: "POST",
+      headers: hdr,
+      body: JSON.stringify({
+        model: chosen,
+        messages: [
+          { role: "system", content: `Ты — Aqjar AI, цифровой справочный помощник села Талшык и Акжарского района СКО Казахстана. Ты НЕ универсальный ассистент — у тебя узкая задача, и это главное правило, важнее вежливости и желания помочь.
+
+ШАГ 1 ПЕРЕД ЛЮБЫМ ОТВЕТОМ: мысленно реши — вопрос касается с. Талшык, Акжарского района, их госучреждений, услуг, телефонов, адресов, расстояний внутри района или документов Казахстана? Если НЕТ — сразу переходи к разделу «ОТКАЗ» ниже и ничего больше не пиши, даже частично.
+
+ТЕБЕ МОЖНО отвечать только на такие темы:
+- работа, часы приёма, услуги госучреждений Талшыка и Акжарского района;
+- телефоны, адреса, экстренные номера этих учреждений;
+- какие документы нужны для услуг (гранты, справки, пособия, занятость) именно в этом районе;
+- расстояния и маршруты между объектами внутри района (для этого ориентируйся на данные Google Maps или 2ГИС, если они упомянуты в контексте);
+- законы и процедуры Казахстана, если они напрямую относятся к такому вопросу.
+
+ТЕБЕ ЗАПРЕЩЕНО отвечать на всё остальное, включая (но не только): другие города, страны, регионы России и любые паспорта/документы не Казахстана; общие знания, математику, рецепты, код, переводы, развлечения, новости, знаменитостей, помощь с учёбой не по теме района, личные советы, медицинские диагнозы, погоду вне контекста района. Даже если вопрос кажется безобидным или интересным — если он не про Талшык/Акжарский район, это запрещённая тема.
+
+Опорные данные (используй точно, не выдумывай другие номера и адреса ОТПРАВЛЯЙ НУЖНЫЕ НОМЕРА КОГДА ТЕБЯ ПРО НИХ СПРАШИВАЮТ НЕ ОТПРАВЛЯЙ НОМЕРА ПРО КОТОРЫЕ ТЕБЕ НЕ СПРАШИВАЛИ НЕ НАДО ИХ ВЕЗДЕ ПРЕДЛАГАТЬ): Акимат — ул. Целинная, 15, тел. +7 (705) 657-13-47; Карьерный Центр — ул. Целинная, 15А; Отдел образования — ул. Целинная, 11, тел. 79-113, 1450; Архив — ул. Целинная, 15; Ветеринария — ул. Абылай хана, 5; Отдел занятости — ул. Целинная, 15; Больница — ул. М. Ауэзова, 19, тел. 103, 21-096, 79-997, 40-000; РОВД — 102; СЭС — ул. Абылай хана, 7; РЭС — 154; iKomek — 109; ЧС — 101, 112; Казахтелеком — ул. Целинная, 22, тел. 160, 165; ЦОН — 1414.
+
+ОТКАЗ: если вопрос не по теме, ответь СТРОГО ТОЛЬКО этой фразой, без извинений от себя, без добавления «но вот что я могу сказать», без попытки частично помочь:
+Русский: «Извините, я цифровой гид с. Талшык и Акжарского района и могу отвечать только на вопросы, связанные с нашим районом.»
+Казахский (если пользователь писал на казахском): «Кешіріңіз, мен Талшық ауылы мен Ақжар ауданының цифрлық гидімін, тек біздің ауданға қатысты сұрақтарға ғана жауап бере аламын.»
+
+Отвечай на языке вопроса (русский или казахский). Будь краток и по делу.` },
+          { role: "user", content: t }
+        ],
+        temperature: 0.2
+      })
+    });
+    const d = await r.json();
+    if (d.error) { m.innerHTML = "Ошибка API (" + chosen + "): " + d.error.message; return; }
+    const reply = (d.choices && d.choices.length > 0) ? d.choices.at(0).message.content : "Пустой ответ от сервера";
+    m.innerHTML = reply.replace(/\n/g, "<br>");
+  } catch (e) {
+    m.innerHTML = "Ошибка сети: " + e.message;
+  }
+}
+
+const row = document.getElementById("akRow");
+if (row) {
+  let isDown = false, startX = 0, scrollLeft = 0, moved = false;
+  row.addEventListener("mousedown", function(e) { isDown = true; moved = false; row.classList.add("dragging"); startX = e.pageX - row.offsetLeft; scrollLeft = row.scrollLeft; });
+  window.addEventListener("mouseup", function() { isDown = false; row.classList.remove("dragging"); });
+  row.addEventListener("mousemove", function(e) {
+    if (isDown) { e.preventDefault(); const x = e.pageX - row.offsetLeft; const walk = (x - startX) * 1.5; if (Math.abs(walk) > 5) moved = true; row.scrollLeft = scrollLeft - walk; return; }
+    const card = e.target.closest(".akzhar-slide");
+    if (card) { const rect = card.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top; card.style.setProperty("--x", x + "px"); card.style.setProperty("--y", y + "px"); const rY = ((x / rect.width) - 0.5) * 10; const rX = ((y / rect.height) - 0.5) * -10; card.style.transform = "perspective(600px) rotateX(" + rX + "deg) rotateY(" + rY + "deg)"; }
+  });
+  row.addEventListener("mouseout", function(e) { const card = e.target.closest(".akzhar-slide"); if (card) card.style.transform = "none"; });
+  row.addEventListener("click", function(e) { if (moved) { e.stopPropagation(); moved = false; } }, true);
+}
+</script>
+<script src="mobile.js"></script>
+<script src="mobile-ux.js"></script>
+<script src="private_ideas.js"></script>
+<script src="mapa.js"></script>
+<script src="weather.js"></script>
+<script src="hub.js"></script>
+<script src="backotkat.js"></script>
+<script src="game.js"></script>
+<script src="live.js"></script>
+<script src="plan.js"></script>
+<script src="reviews.js"></script>
+<script src="guide.js"></script>
+<script src="chat_proxy.js"></script>
+<script src="mobile-fix.js"></script>
+</body>
+</html>
