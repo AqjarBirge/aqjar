@@ -459,7 +459,8 @@
       pickVoice(lc).then(function(v) {
         if (tok !== speakTok) return;
         // разрешены только Светлана (ru) и Айгуль (kz): если их нет на устройстве, показываем подписи без озвучки браузера
-        if (!v) { fbTimer = setTimeout(finish, waitMs); return; }
+        if (!v) { console.warn("[guide] нет подходящего голоса для", lc, "— звука не будет"); fbTimer = setTimeout(finish, waitMs); return; }
+        console.log("[guide] голос браузера:", v.name, v.lang);
         const spoken = (lc === "ru" && !noFix) ? fixPron(text) : text;
         const chunks = (spoken.match(/[^.!?]+[.!?]*/g) || [spoken]).map(function(c) { return c.trim(); }).filter(Boolean);
         let i = 0;
@@ -485,12 +486,14 @@
         curAudio = null;
         tts();
       };
-      const a = new Audio("audio/" + lc + "-" + audioIdx + ".mp3");
+      const src = "audio/" + lc + "-" + audioIdx + ".mp3";
+      const a = new Audio(src);
       curAudio = a;
       a.onended = function() { curAudio = null; finish(); };
-      a.onerror = fb;
+      a.onerror = function() { console.warn("[guide] не загрузился файл:", src); fb(); };
       const pr = a.play();
-      if (pr && pr.catch) pr.catch(fb);
+      if (pr && pr.catch) pr.catch(function(e) { console.warn("[guide] play() отклонён:", src, e && e.name, e && e.message); fb(); });
+      else console.log("[guide] играет файл:", src);
     } else {
       tts();
     }
