@@ -183,7 +183,6 @@
       denied: "Не удалось определить местоположение. Разрешите геолокацию или выберите точку старта в списке.",
       footRes: "🚶 Пешком по улицам: ", carRes: "🚗 На машине по улицам: ", approx: ", примерно ",
       fallback: function(d) { return "Маршрут по улицам сейчас недоступен (нет связи с сервисом). Показана прямая: " + d + "."; },
-      detourLine: function(d, t) { return "Здание рядом, а по улицам выходит большой крюк — показан прямой путь: " + d + ", примерно " + t + "."; },
       roughLine: function(d, t) { return "⚠️ На карте OpenStreetMap дороги к этому объекту проложены неполно, поэтому показана прямая: " + d + ", примерно " + t + "."; },
       m: "м", km: "км", h: " ч ", min: "мин",
       testBtn: "Произнести",
@@ -216,7 +215,6 @@
       denied: "Орналасқан жерді анықтау мүмкін болмады. Геолокацияға рұқсат беріңіз немесе тізімнен бастапқы нүктені таңдаңыз.",
       footRes: "🚶 Жаяу көшелер бойынша: ", carRes: "🚗 Көлікпен көшелер бойынша: ", approx: ", шамамен ",
       fallback: function(d) { return "Көшелер бойынша бағыт қазір қолжетімсіз (сервиспен байланыс жоқ). Түзу сызық көрсетілді: " + d + "."; },
-      detourLine: function(d, t) { return "Ғимарат жақын, ал көшемен үлкен айналма шығады — тік жол көрсетілді: " + d + ", шамамен " + t + "."; },
       roughLine: function(d, t) { return "⚠️ OpenStreetMap картасында бұл нысанға жол толық салынбаған, сондықтан түзу сызық көрсетілді: " + d + ", шамамен " + t + "."; },
       m: "м", km: "км", h: " сағ ", min: "мин",
       testBtn: "Айту",
@@ -731,9 +729,7 @@
         const straightD = g.map.distance(start, p.ll);
         const gapE = g.map.distance(pts[pts.length - 1], p.ll);
         const gapS = g.map.distance(pts[0], start);
-        if (gapE > 150 || gapS > 150) throw new Error("bad_route");
-        // здания рядом, а роутер повёл в обход квартала — идём напрямую (пешком порог строже, чем на машине)
-        if (rt.distance > (mode === "foot" ? straightD * 1.7 + 150 : straightD * 2.5 + 400)) throw new Error("detour");
+        if (gapE > 150 || gapS > 150 || rt.distance > straightD * 2.5 + 400) throw new Error("bad_route");
         // OSRM притягивает точки к ближайшей дороге: дорисовываем отрезки до точных координат
         const dashed = { color: "#f59e0b", weight: 4, dashArray: "6 8" };
         const layers = [
@@ -748,14 +744,14 @@
         g.map.fitBounds(L.latLngBounds(pts.concat([p.ll, start])), { padding: [60, 60], maxZoom: 17 });
         animateWalker(g, pts.concat([p.ll]));
         if (out) out.textContent = (mode === "car" ? T("carRes") : T("footRes")) + fmtDist(rt.distance) + T("approx") + fmtTime(rt.duration) + ".";
-      }).catch(function(e) {
+      }).catch(function() {
         routeLayer = L.layerGroup([
           L.polyline([start, p.ll], { color: "#f59e0b", weight: 4, dashArray: "8 8" }),
           dot()
         ]).addTo(g.map);
         g.map.fitBounds(L.latLngBounds([start, p.ll]), { padding: [60, 60], maxZoom: 17 });
         const dd = g.map.distance(start, p.ll);
-        if (out) out.textContent = T(e && e.message === "detour" ? "detourLine" : "roughLine")(fmtDist(dd), fmtTime(dd * (mode === "foot" ? 1.15 : 1) / (mode === "car" ? 8.3 : 1.35)));
+        if (out) out.textContent = T("roughLine")(fmtDist(dd), fmtTime(dd / (mode === "car" ? 8.3 : 1.35)));
       });
       };
       if (toVal === "pick") {
