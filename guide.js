@@ -269,11 +269,6 @@
     '<button type="button" class="gv-b" id="gvGo"></button>' +
     '<button type="button" class="gv-b sec" id="gvTour"></button></div>' +
     '<div class="gv-chips" id="gvChips"></div>' +
-    '<div class="gv-row" id="gvVoiceRow" style="display:none;align-items:center">' +
-    '<span id="gvVoiceLbl" style="font-size:12px;color:var(--mt)"></span>' +
-    '<select id="gvVoice" class="gv-sel"></select>' +
-    '<button type="button" class="gv-b sec" id="gvTest"></button>' +
-    '<span id="gvVoiceHint" style="font-size:12px;color:var(--mt)"></span></div>' +
     '<div class="gv-ans" id="gvAns"></div>';
   const wrapEl = p3.querySelector(".org-gis-wrap");
   p3.insertBefore(bar, wrapEl || null);
@@ -314,9 +309,6 @@
     document.getElementById("gvTour").textContent = T("tour");
     const tb = document.getElementById("gvTestBtn");
     if (tb) tb.textContent = T("testBtn");
-    document.getElementById("gvVoiceLbl").textContent = T("voiceLbl");
-    document.getElementById("gvTest").textContent = T("testVoice");
-    fillVoices();
     const chips = document.getElementById("gvChips");
     chips.innerHTML = "";
     T("chips").forEach(function(txt) {
@@ -404,34 +396,6 @@
       const sv = savedVoice(lc);
       const f = sv && list.find(function(v) { return v.name === sv; });
       return f || list[0] || null;
-    });
-  }
-  let fillTok = 0;
-  function fillVoices() {
-    const lc = LG();
-    const tok = ++fillTok;   // защита от гонки: если язык переключили, устаревший ответ игнорируем
-    voicesFor(lc).then(function(list) {
-      if (tok !== fillTok) return;
-      const row = document.getElementById("gvVoiceRow");
-      const sel = document.getElementById("gvVoice");
-      const hint = document.getElementById("gvVoiceHint");
-      if (!row || !sel) return;
-      sel.innerHTML = "";
-      const sv = savedVoice(lc);
-      list.forEach(function(v, i) {
-        const o = document.createElement("option");
-        o.value = v.name;
-        o.textContent = v.name + (i === 0 && !sv ? T("best") : "");
-        if (sv === v.name) o.selected = true;
-        sel.appendChild(o);
-      });
-      sel.onchange = function() { try { localStorage.setItem("aqjar_voice_" + LG(), sel.value); } catch (e) {} };
-      document.getElementById("gvTest").onclick = function() { say(T("sample"), null, null, LG()); };
-      const none = !list.length;
-      sel.style.display = none ? "none" : "";
-      document.getElementById("gvTest").style.display = none ? "none" : "";
-      hint.textContent = none ? T("noVoice") : "";
-      row.style.display = (none && !T("noVoice")) ? "none" : "flex";
     });
   }
   function stopSpeech() {
