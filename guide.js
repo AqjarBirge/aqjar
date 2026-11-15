@@ -452,7 +452,8 @@
     const finish = function() { if (tok === speakTok && onend) onend(); };
     const waitMs = Math.max(3500, text.length * 60);
 
-    if (muted) { fbTimer = setTimeout(finish, waitMs); return; }
+    console.log("[guide] say(): lang=" + lc + ", шаг=" + audioIdx + ", muted=" + muted + ", RU_AUDIO_FILES=" + RU_AUDIO_FILES);
+    if (muted) { console.warn("[guide] звук выключен кнопкой 🔇"); fbTimer = setTimeout(finish, waitMs); return; }
 
     const tts = function() {
       if (!synth) { fbTimer = setTimeout(finish, waitMs); return; }
@@ -489,7 +490,9 @@
       const src = "audio/" + lc + "-" + audioIdx + ".mp3";
       const a = new Audio(src);
       curAudio = a;
-      a.onended = function() { curAudio = null; finish(); };
+      a.onplaying = function() { console.log("[guide] mp3 ИГРАЕТ:", src, "громкость=" + a.volume, "длительность=" + a.duration); };
+      a.onpause = function() { console.warn("[guide] mp3 поставлен на паузу:", src, "на", a.currentTime.toFixed(2), "с"); };
+      a.onended = function() { console.log("[guide] mp3 закончился:", src); curAudio = null; finish(); };
       a.onerror = function() { console.warn("[guide] не загрузился файл:", src); fb(); };
       const pr = a.play();
       if (pr && pr.catch) pr.catch(function(e) { console.warn("[guide] play() отклонён:", src, e && e.name, e && e.message); fb(); });
