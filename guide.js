@@ -8,7 +8,7 @@
   // ===== ГОЛОС =====
   const VOICE_RATE = 1.1;        // скорость озвучки (1 = обычная)
   const CHUNK_PAUSE = 120;       // пауза между предложениями, мс
-  const RU_AUDIO_FILES = false;   // false: русский всегда читает голос браузера (файлы audio/ru-*.mp3 не используются); true: сначала играть готовые mp3
+  const RU_AUDIO_FILES = true;    // false: русский всегда читает голос браузера (файлы audio/ru-*.mp3 не используются); true: сначала играть готовые mp3
   // Замены для правильного ударения. Применяются только к тому, что ПРОИЗНОСИТСЯ (подписи не меняются).
   // Если ударение всё ещё неверное — пробуйте варианты (см. подсказку в ответе):
   //   "Талшы\u0301к" (знак ударения), "Тал-шык", "Талшык"
@@ -389,7 +389,11 @@
       if (lc === "kz") {
         return vs.filter(function(v) { return /^kk/i.test(v.lang) && /aigul|айгүл|айгул/i.test(v.name || ""); }).sort(function(a, b) { return kzScore(b) - kzScore(a); });
       }
-      return vs.filter(function(v) { return /^ru/i.test(v.lang) && /svetlana|светлана/i.test(v.name || ""); }).sort(function(a, b) { return ruScore(b) - ruScore(a); });
+      // Светлана — приоритет (Edge); если её нет (Chrome, телефон) — любой русский голос, например «Google русский»
+      const ru = vs.filter(function(v) { return /^ru/i.test(v.lang) || /russian|русск/i.test(v.name || ""); });
+      return ru.sort(function(a, b) {
+        return (ruScore(b) + (isFemale(b) ? 20 : 0)) - (ruScore(a) + (isFemale(a) ? 20 : 0));
+      });
     });
   }
   function savedVoice(lc) {
