@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-ru="Aqjar Digital — Главный портал с. Талшык и Акжарского района" data-kz="Aqjar Digital — Талшық ауылы мен Ақжар ауданының басты порталы">Aqjar Digital — Главный портал с. Талшык и Акжарского района</title>
+<meta name="theme-color" content="#1b2a47">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Tektur:wght@400..900&family=Unbounded:wght@300..900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #1b2a47;
+    --surface: #2a3a57;
+    --surface-hover: #33456a;
+    --input-bg: #23324f;
+    --border: rgba(255, 255, 255, 0.13);
+    --text: #f1f5f9;
+    --muted: #a9b8cc;
+    --accent: #14b8a6;
+    --accent-hover: #0d9488;
+    --accent-soft: rgba(20, 184, 166, 0.14);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+  body { background-color: var(--bg); color: var(--text); line-height: 1.55; }
+  a { text-decoration: none; color: inherit; }
+
+  header { border-bottom: 1px solid var(--border); background-color: var(--bg); position: sticky; top: 0; z-index: 50; }
+  .nav { max-width: 1120px; margin: 0 auto; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+  .logo { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 18px; }
+  .logo-badge { background-color: var(--accent-soft); color: var(--accent); border: 1px solid rgba(20, 184, 166, 0.25); width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
+  .nav-links { display: flex; gap: 26px; font-size: 14px; color: var(--muted); font-weight: 600; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta { background-color: var(--accent); color: #fff; padding: 10px 18px; border-radius: 12px; font-size: 13px; font-weight: 700; transition: background-color 0.2s; }
+  .nav-cta:hover { background-color: var(--accent-hover); }
+
+  .container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+  .hero { padding: 64px 0 52px; display: grid; grid-template-columns: 1.25fr 0.95fr; gap: 36px; align-items: center; }
+  @media (max-width: 860px) { .hero { grid-template-columns: 1fr; padding: 40px 0; } .nav-links { display: none; } }
+  .region-tag { display: inline-block; font-size: 12px; font-weight: 700; color: var(--accent); background-color: var(--accent-soft); padding: 6px 14px; border-radius: 20px; margin-bottom: 18px; }
+  .hero h1 { font-size: 40px; font-weight: 800; line-height: 1.18; letter-spacing: -0.4px; margin-bottom: 16px; }
+  .hero p { font-size: 16px; color: var(--muted); margin-bottom: 28px; max-width: 530px; }
+
+  .search-box { display: flex; gap: 8px; background-color: var(--surface); border: 1px solid var(--border); padding: 7px; border-radius: 14px; max-width: 540px; margin-bottom: 16px; }
+  .search-box input { flex: 1; background-color: transparent; border: none; color: var(--text); padding: 10px 14px; font-size: 14px; outline: none; }
+  .search-box button { background-color: var(--accent); color: #fff; border: none; padding: 11px 20px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: background-color 0.2s; }
+  .search-box button:hover { background-color: var(--accent-hover); }
+  .quick-tags { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; font-size: 12px; color: var(--muted); }
+  .quick-tags a { background-color: var(--surface); border: 1px solid var(--border); padding: 6px 12px; border-radius: 10px; transition: border-color 0.15s, color 0.15s; }
+  .quick-tags a:hover { border-color: var(--accent); color: var(--text); }
+
+  .summary-card { background-color: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 26px; display: flex; flex-direction: column; gap: 14px; }
+  .sum-head { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 14px; margin-bottom: 2px; }
+  .sum-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; padding: 10px 14px; background-color: var(--input-bg); border-radius: 12px; }
+  .sos-num { font-weight: 800; color: #f87171; background-color: rgba(248, 113, 113, 0.14); padding: 3px 10px; border-radius: 8px; }
+  .info-num { font-weight: 800; color: var(--accent); background-color: var(--accent-soft); padding: 3px 10px; border-radius: 8px; }
+
+  .section { padding: 48px 0; border-top: 1px solid var(--border); }
+  .sec-title { font-size: 24px; font-weight: 800; margin-bottom: 6px; }
+  .sec-sub { font-size: 14px; color: var(--muted); margin-bottom: 26px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; }
+  .card { background-color: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; gap: 18px; transition: transform 0.2s, background-color 0.2s, border-color 0.2s; }
+  .card:hover { transform: translateY(-2px); background-color: var(--surface-hover); border-color: rgba(20, 184, 166, 0.4); }
+  .c-icon { width: 42px; height: 42px; border-radius: 12px; background-color: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 14px; }
+  .card h3 { font-size: 17px; margin-bottom: 8px; }
+  .card p { font-size: 13px; color: var(--muted); }
+  .c-link { font-size: 13px; font-weight: 700; color: var(--accent); }
+
+  footer { border-top: 1px solid var(--border); padding: 28px 0; margin-top: 20px; font-size: 13px; color: var(--muted); }
+  .foot-flex { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+  .grid { grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr)); }
+  .about-text { font-size: 14px; color: var(--muted); max-width: 720px; }
+  html, body { overflow-x: hidden; }
+  button.sos-num, button.info-num { border: 0; cursor: pointer; font-size: inherit; line-height: inherit; display: inline-flex; align-items: center; gap: 6px; }
+  .sos-num svg.ic, .info-num svg.ic { background: none; box-shadow: none; padding: 0; width: 1em; height: 1em; vertical-align: -.15em; opacity: .85; }
+  .copy-hint { font-size: 12px; color: var(--muted); text-align: center; margin-top: -4px; }
+  .toast { position: fixed; left: 50%; bottom: 28px; transform: translate(-50%, 16px); background: #10b981; color: #fff; padding: 10px 18px; border-radius: 12px; font-size: 13px; font-weight: 700; z-index: 999; opacity: 0; pointer-events: none; transition: opacity .2s ease, transform .2s ease; max-width: calc(100vw - 32px); text-align: center; }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+  .hero > div, .grid > .card, .summary-card { min-width: 0; }
+  .search-box input { min-width: 0; width: 100%; }
+  @media (max-width: 560px) {
+    .nav { padding: 12px 16px; gap: 10px; }
+    .logo { font-size: 16px; gap: 8px; }
+    .logo-place { display: none; }
+    .nav-cta { padding: 9px 12px; font-size: 12px; white-space: nowrap; }
+    .container { padding: 0 16px; }
+    .hero { padding: 28px 0 32px; gap: 24px; }
+    .hero h1 { font-size: 27px; }
+    .hero p { font-size: 15px; margin-bottom: 20px; }
+    .search-box input { min-width: 0; padding: 10px 8px; }
+    .search-box button { padding: 11px 14px; }
+    .summary-card { padding: 18px; }
+    .sum-row { font-size: 13px; gap: 8px; }
+    .section { padding: 36px 0; }
+    .sec-title { font-size: 21px; }
+    .card { padding: 18px; }
+    .foot-flex { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+<link rel="stylesheet" href="polish.css">
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <div class="logo">
+      <a class="logo-main" href="#" onclick="event.preventDefault();window.scrollTo({top:0,behavior:'smooth'})">
+        <div class="logo-badge">🧭</div>
+        <div class="logo-name">Aqjar Digital</div>
+      </a>
+      <a class="logo-place" href="app.html?tab=r3" data-ru="с. Талшык" data-kz="Талшық а.">с. Талшык</a>
+    </div>
+    <nav class="nav-links">
+      <a href="#services" data-ru="Разделы портала" data-kz="Портал бөлімдері">Разделы портала</a>
+      <a href="#about" data-ru="О проекте" data-kz="Жоба туралы">О проекте</a>
+      <a href="app.html?tab=r2" data-ru="Экстренные номера" data-kz="Шұғыл нөмірлер">Экстренные номера</a>
+    </nav>
+    <button type="button" id="langQ" class="lang-q" onclick="aqSetLang(window.aqLang==='kz'?'ru':'kz')" data-noi18n="1" title="Тіл / Язык">ҚАЗ</button>
+    <a href="app.html" class="nav-cta" data-ru="Открыть сервис →" data-kz="Қызметті ашу →">Открыть сервис →</a>
+  </div>
+</header>
+
+<main class="container">
+  <section class="hero">
+    <div>
+      <div class="region-tag" data-ru="СКО • Акжарский район • с. Талшык" data-kz="СҚО • Ақжар ауданы • Талшық а.">СКО • Акжарский район • с. Талшык</div>
+      <h1 data-ru="Единый цифровой справочник и навигатор услуг района" data-kz="Ауданның бірыңғай цифрлық анықтамалығы және қызметтер навигаторы">Единый цифровой справочник и навигатор услуг района</h1>
+      <p data-ru="Быстрый доступ к контактам государственных учреждений, экстренным службам, интерактивной схеме села Талшык и справочному онлайн-консультанту." data-kz="Мемлекеттік мекемелердің байланыстарына, шұғыл қызметтерге, Талшық ауылының интерактивті сызбасына және анықтамалық онлайн-кеңесшіге жылдам қол жеткізу.">Быстрый доступ к контактам государственных учреждений, экстренным службам, интерактивной схеме села Талшык и справочному онлайн-консультанту.</p>
+
+      <div class="search-box">
+        <input type="text" id="hubQ" placeholder="Введите ваш вопрос по услугам или учреждениям..." data-ph-ru="Введите ваш вопрос по услугам или учреждениям..." data-ph-kz="Қызметтер немесе мекемелер туралы сұрағыңызды жазыңыз..." onkeydown="if(event.key==='Enter')goChat()">
+        <button type="button" onclick="goChat()" data-ru="Найти ответ" data-kz="Жауап табу">Найти ответ</button>
+      </div>
+
+      <div class="quick-tags">
+        <span data-ru="Популярное:" data-kz="Танымал:">Популярное:</span>
+        <a href="app.html?ask=График приёма граждан в Акимате Акжарского района" data-href-ru="app.html?ask=График приёма граждан в Акимате Акжарского района" data-href-kz="app.html?ask=Ақжар ауданы әкімдігінде азаматтарды қабылдау кестесі" data-ru="Приём в Акимате" data-kz="Әкімдіктегі қабылдау">Приём в Акимате</a>
+        <a href="app.html?ask=Как оформить грант до 400 МРП в Карьерном центре" data-href-ru="app.html?ask=Как оформить грант до 400 МРП в Карьерном центре" data-href-kz="app.html?ask=Мансап орталығында 400 АЕК-ке дейінгі грантты қалай рәсімдеуге болады" data-ru="Гранты до 400 МРП" data-kz="400 АЕК-ке дейінгі гранттар">Гранты до 400 МРП</a>
+        <a href="app.html?ask=Телефоны регистратуры и приёмного покоя больницы в Талшыке" data-href-ru="app.html?ask=Телефоны регистратуры и приёмного покоя больницы в Талшыке" data-href-kz="app.html?ask=Талшықтағы аурухананың тіркеу орны мен қабылдау бөлімінің телефондары" data-ru="Больница" data-kz="Аурухана">Больница</a>
+      </div>
+    </div>
+
+    <div class="summary-card">
+      <div class="sum-head">
+        <div>
+          <b style="font-size:15px" data-ru="Оперативная сводка" data-kz="Жедел мәлімет">Оперативная сводка</b>
+          <div style="font-size:12px;color:var(--muted)" id="hubClock">с. Талшык • Загрузка времени...</div>
+        </div>
+        <span style="font-size:11px;font-weight:700;color:var(--accent);background-color:var(--accent-soft);padding:4px 10px;border-radius:12px">Онлайн</span>
+      </div>
+      <div class="sum-row"><span data-ru="Единая служба спасения" data-kz="Бірыңғай құтқару қызметі">Единая служба спасения</span><button type="button" class="sos-num" onclick="cp('112')" aria-label="112">112 📋</button></div>
+      <div class="sum-row"><span data-ru="Скорая медицинская помощь" data-kz="Жедел медициналық жәрдем">Скорая медицинская помощь</span><button type="button" class="sos-num" onclick="cp('103')" aria-label="103">103 📋</button></div>
+      <div class="sum-row"><span data-ru="Дежурная часть РОВД" data-kz="АПБ кезекші бөлімі">Дежурная часть РОВД</span><button type="button" class="sos-num" onclick="cp('102')" aria-label="102">102 📋</button></div>
+      <div class="sum-row"><span data-ru="Аварийная электросетей (РЭС)" data-kz="Электр желілерінің апаттық қызметі (АЭЖ)">Аварийная электросетей (РЭС)</span><button type="button" class="sos-num" onclick="cp('154')" aria-label="154">154 📋</button></div>
+      <div class="sum-row"><span data-ru="Контакт-центр госуслуг" data-kz="Мемлекеттік қызметтер байланыс орталығы">Контакт-центр госуслуг</span><button type="button" class="info-num" onclick="cp('1414')" aria-label="1414">1414 📋</button></div>
+      <div class="copy-hint" data-ru="Нажмите на номер, чтобы скопировать" data-kz="Көшіру үшін нөмірді басыңыз">Нажмите на номер, чтобы скопировать</div>
+    </div>
+  </section>
+
+  <section class="section" id="services">
+    <h2 class="sec-title" data-ru="Разделы цифровой платформы" data-kz="Цифрлық платформа бөлімдері">Разделы цифровой платформы</h2>
+    <p class="sec-sub" data-ru="Выберите нужный инструмент — система откроет соответствующий раздел приложения" data-kz="Қажетті құралды таңдаңыз — жүйе қолданбаның сәйкес бөлімін ашады">Выберите нужный инструмент — система откроет соответствующий раздел приложения</p>
+
+    <div class="grid">
+      <a href="app.html?tab=r1" class="card">
+        <div>
+          <div class="c-icon">💬</div>
+          <h3 data-ru="Справочный онлайн-консультант" data-kz="Анықтамалық онлайн-кеңесші">Справочный онлайн-консультант</h3>
+          <p data-ru="Автоматизированный помощник, который отвечает на вопросы жителей по адресам, документам и работе служб на русском и казахском языках." data-kz="Тұрғындардың мекенжайлар, құжаттар және қызметтердің жұмысы туралы сұрақтарына орыс және қазақ тілдерінде жауап беретін автоматтандырылған көмекші.">Автоматизированный помощник, который отвечает на вопросы жителей по адресам, документам и работе служб на русском и казахском языках.</p>
+        </div>
+        <div class="c-link" data-ru="Перейти в чат →" data-kz="Чатқа өту →">Перейти в чат →</div>
+      </a>
+
+      <a href="app.html?tab=r3" class="card">
+        <div>
+          <div class="c-icon">🏢</div>
+          <h3 data-ru="Государственные организации" data-kz="Мемлекеттік ұйымдар">Государственные организации</h3>
+          <p data-ru="Картотека учреждений с. Талшык: Акимат, Карьерный центр, Архив, Ветеринария, Отделы образования и социальной защиты." data-kz="Талшық ауылы мекемелерінің картотекасы: Әкімдік, Мансап орталығы, Архив, Ветеринария, білім және әлеуметтік қорғау бөлімдері.">Картотека учреждений с. Талшык: Акимат, Карьерный центр, Архив, Ветеринария, Отделы образования и социальной защиты.</p>
+        </div>
+        <div class="c-link" data-ru="Открыть список →" data-kz="Тізімді ашу →">Открыть список →</div>
+      </a>
+
+      <a href="app.html?tab=r2" class="card">
+        <div>
+          <div class="c-icon">📞</div>
+          <h3 data-ru="Телефонный справочник" data-kz="Телефон анықтамалығы">Телефонный справочник</h3>
+          <p data-ru="Удобные карточки с прямыми номерами приёмных покоев, диспетчерских и коммунальных служб с копированием в один клик." data-kz="Қабылдау бөлмелерінің, диспетчерлік және коммуналдық қызметтердің тікелей нөмірлері бар ыңғайлы карточкалар — бір басумен көшіру.">Удобные карточки с прямыми номерами приёмных покоев, диспетчерских и коммунальных служб с копированием в один клик.</p>
+        </div>
+        <div class="c-link" data-ru="Смотреть номера →" data-kz="Нөмірлерді көру →">Смотреть номера →</div>
+      </a>
+
+      <a href="app.html?tab=r3" class="card">
+        <div>
+          <div class="c-icon">🗺️</div>
+          <h3 data-ru="Схема улиц и меры поддержки" data-kz="Көшелер сызбасы және қолдау шаралары">Схема улиц и меры поддержки</h3>
+          <p data-ru="Интерактивная карта центральных улиц с. Талшык и подборщик государственных программ, грантов и пособий для жителей района." data-kz="Талшық ауылы орталық көшелерінің интерактивті картасы және аудан тұрғындарына арналған мемлекеттік бағдарламалар, гранттар мен жәрдемақылар іріктегіші.">Интерактивная карта центральных улиц с. Талшык и подборщик государственных программ, грантов и пособий для жителей района.</p>
+        </div>
+        <div class="c-link" data-ru="Открыть карту →" data-kz="Картаны ашу →">Открыть карту →</div>
+      </a>
+    </div>
+  </section>
+
+  <section class="section" id="about">
+    <h2 class="sec-title" data-ru="О проекте Aqjar Digital" data-kz="Aqjar Digital жобасы туралы">О проекте Aqjar Digital</h2>
+    <p class="about-text" data-ru="Проект разработан в рамках инициативы Digital Aimaq для повышения доступности справочной информации и цифровых услуг для жителей села Талшык и сельских округов Акжарского района." data-kz="Жоба Талшық ауылы мен Ақжар ауданының ауылдық округтері тұрғындары үшін анықтамалық ақпарат пен цифрлық қызметтердің қолжетімділігін арттыру мақсатында Digital Aimaq бастамасы аясында әзірленді.">Проект разработан в рамках инициативы Digital Aimaq для повышения доступности справочной информации и цифровых услуг для жителей села Талшык и сельских округов Акжарского района.</p>
+  </section>
+</main>
+
+<footer>
+  <div class="container foot-flex">
+    <div data-ru="© 2026 Aqjar Digital • с. Талшык, Акжарский район, СКО" data-kz="© 2026 Aqjar Digital • Талшық а., Ақжар ауданы, СҚО">© 2026 Aqjar Digital • с. Талшык, Акжарский район, СКО</div>
+    <div data-ru="Код районной телефонной связи: 8-715-46" data-kz="Аудандық телефон байланысының коды: 8-715-46">Код районной телефонной связи: 8-715-46</div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+var toastTimer;
+function showToast(msg) {
+  var t = document.getElementById("toast");
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { t.classList.remove("show"); }, 1800);
+}
+// копирование номера: современный способ + запасной (для http:// и старых браузеров)
+function cp(v) {
+  var kz = window.aqLang === "kz";
+  var done = function() { showToast((kz ? "✓ Көшірілді: " : "✓ Скопировано: ") + v); };
+  var fallback = function() {
+    var a = document.createElement("textarea");
+    a.value = v;
+    a.setAttribute("readonly", "");
+    a.style.cssText = "position:fixed;top:0;left:0;opacity:0;font-size:16px";
+    document.body.appendChild(a);
+    a.select();
+    a.setSelectionRange(0, v.length);
+    var ok = false;
+    try { ok = document.execCommand("copy"); } catch (e) {}
+    document.body.removeChild(a);
+    if (ok) done(); else showToast((kz ? "Көшіру мүмкін болмады: " : "Не удалось скопировать: ") + v);
+  };
+  if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(v).then(done, fallback);
+  else fallback();
+}
+function goChat() {
+  var el = document.getElementById("hubQ");
+  var v = el ? el.value.trim() : "";
+  location.href = "app.html" + (v ? "?ask=" + encodeURIComponent(v) : "?tab=r1");
+}
+function hubTick() {
+  var el = document.getElementById("hubClock");
+  if (!el) return;
+  var d = new Date(Date.now() + 5 * 3600 * 1000); // Казахстан UTC+5
+  var p = function(n) { return String(n).padStart(2, "0"); };
+  el.textContent = (window.aqLang === "kz" ? "Талшық а. • " : "с. Талшык • ") + p(d.getUTCHours()) + ":" + p(d.getUTCMinutes());
+}
+hubTick();
+setInterval(hubTick, 30000);
+document.addEventListener("aqi18n", hubTick);
+</script>
+<script src="icons.js"></script>
+<script src="i18n.js"></script>
+</body>
+</html>

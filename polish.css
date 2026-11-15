@@ -1,0 +1,305 @@
+/* polish.css — шрифты, типографика, анимации кнопок и подложки иконок.
+
+   Шрифты (все из Google Fonts, подключены в <head> app.html и index.html):
+     • Unbounded — главные заголовки и надпись «Aqjar AI»   → --font-display
+     • Tektur    — карточки справочника и погода            → --font-tech
+     • Inter     — весь остальной текст и запасной шрифт     → --font
+   Если в шрифте нет какой-то казахской буквы (Ә Ғ Қ Ң Ө Ұ Ү Һ І), браузер возьмёт только эту
+   букву из Inter — «квадратиков» не будет. Для казахского языка (html[lang="kk"]) размеры
+   дисплейных шрифтов уменьшены, т.к. казахские слова длиннее. */
+
+:root {
+  --font: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+  --font-display: 'Unbounded', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --font-tech: 'Tektur', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+*, *::before, *::after { font-family: var(--font); }
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-synthesis: none;
+}
+body { font-weight: 400; letter-spacing: -0.003em; font-kerning: normal; }
+
+/* =====================================================================
+   1. UNBOUNDED — главные заголовки и «Aqjar AI»
+   ===================================================================== */
+.brand, .top-brand, .logo-name,
+.hb-title, .hero h1, .sec-title,
+#p2 h2, #p3 h2, #p4 h2, .rv-wrap h2,
+.lv-head h3, .gm-box h3, .rt-box h3, .org-gis-side h3, .rv-box h3, #gvTitle, .gv-bar h3 {
+  font-family: var(--font-display) !important;
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+.hb-title, .hero h1 {
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.16;
+  font-size: clamp(22px, 2.5vw, 30px);
+}
+.hero h1 { font-size: clamp(28px, 3.5vw, 40px); }
+.sec-title { font-weight: 700; letter-spacing: -0.03em; font-size: clamp(20px, 2.1vw, 24px); }
+#p2 h2, #p3 h2, .rv-wrap h2 {
+  font-weight: 700; letter-spacing: -0.03em; font-size: 19px; line-height: 1.25;
+}
+.lv-head h3, .gm-box h3, .rt-box h3, .org-gis-side h3, .rv-box h3, #gvTitle, .gv-bar h3 {
+  font-weight: 650; letter-spacing: -0.025em; font-size: 16px; line-height: 1.3;
+}
+
+/* надпись Aqjar AI */
+.brand {
+  font-size: 21px; font-weight: 800; letter-spacing: -0.04em; color: var(--ac);
+  cursor: pointer; width: fit-content; transform-origin: left center;
+  display: inline-flex; align-items: center; gap: .1em;
+}
+.top-brand {
+  font-weight: 800 !important; letter-spacing: -0.04em; font-size: 16px !important;
+  cursor: pointer; display: inline-block; transform-origin: left center;
+}
+.logo { cursor: pointer; transform-origin: left center; }
+.logo > div:last-child { font-weight: 800; letter-spacing: -0.04em; font-size: 16px; }
+
+/* =====================================================================
+   2. TEKTUR — карточки справочника и прогноз погоды
+   ===================================================================== */
+#p2 .card, #p2 .card *,
+#p2 .akzhar-slide, #p2 .akzhar-slide *,
+#p2 .cards p,
+.w-card, .w-card * {
+  font-family: var(--font-tech) !important;
+}
+#p2 .card h3, #p2 .card-title { font-weight: 700; letter-spacing: 0; }
+#p2 .card p, #p2 .card-extra, #p2 .card-footer { font-weight: 500; letter-spacing: .01em; }
+#p2 .ph, #p2 .card-number, #p2 .card-extra strong { font-weight: 700; letter-spacing: .02em; }
+#p2 .card-number { font-size: 36px; font-weight: 800; letter-spacing: 0; }
+#p2 .card-badge { font-weight: 700; letter-spacing: .1em; }
+#p2 .btn { font-weight: 700; letter-spacing: .03em; }
+.w-temp { font-weight: 800; letter-spacing: 0; font-size: 26px; }
+.w-desc { font-weight: 600; letter-spacing: .02em; }
+.w-wind { font-weight: 500; letter-spacing: .02em; }
+
+/* =====================================================================
+   3. КАЗАХСКИЙ ЯЗЫК: те же шрифты, но подогнаны под длинные слова и свои буквы
+   ===================================================================== */
+html[lang="kk"] .brand, html[lang="kk"] .top-brand, html[lang="kk"] .logo > div:last-child { letter-spacing: -0.03em; }
+html[lang="kk"] .hb-title { font-size: clamp(19px, 2.1vw, 25px); letter-spacing: -0.03em; line-height: 1.22; font-weight: 650; }
+html[lang="kk"] .hero h1 { font-size: clamp(24px, 3vw, 34px); letter-spacing: -0.03em; line-height: 1.2; font-weight: 650; }
+html[lang="kk"] .sec-title { font-size: clamp(18px, 1.9vw, 22px); font-weight: 650; line-height: 1.25; }
+html[lang="kk"] #p2 h2, html[lang="kk"] #p3 h2, html[lang="kk"] .rv-wrap h2 { font-size: 16.5px; font-weight: 650; }
+html[lang="kk"] .lv-head h3, html[lang="kk"] .gm-box h3, html[lang="kk"] .rt-box h3,
+html[lang="kk"] .org-gis-side h3, html[lang="kk"] .rv-box h3,
+html[lang="kk"] #gvTitle, html[lang="kk"] .gv-bar h3 { font-size: 14.5px; font-weight: 600; line-height: 1.35; }
+/* Tektur: чуть компактнее и без растяжки, чтобы длинные казахские строки не вылезали из карточек */
+html[lang="kk"] #p2 .card h3, html[lang="kk"] #p2 .card-title { font-size: 14.5px; line-height: 1.25; }
+html[lang="kk"] #p2 .card p, html[lang="kk"] #p2 .card-extra, html[lang="kk"] #p2 .card-footer { letter-spacing: 0; }
+html[lang="kk"] #p2 .card-badge { letter-spacing: .05em; font-size: 9.5px; }
+html[lang="kk"] #p2 .card-extra { font-size: 11.5px; }
+html[lang="kk"] #p2 .btn { letter-spacing: 0; }
+html[lang="kk"] .w-desc, html[lang="kk"] .w-wind { letter-spacing: 0; }
+html[lang="kk"] #p2 .card *, html[lang="kk"] #p2 .akzhar-slide *, html[lang="kk"] .w-card * { overflow-wrap: anywhere; }
+
+@media (max-width: 768px) {
+  .hb-title { font-size: 20px; }
+  .hero h1 { font-size: 25px; }
+  .brand { font-size: 19px; }
+  html[lang="kk"] .hb-title { font-size: 17.5px; }
+  html[lang="kk"] .hero h1 { font-size: 22px; }
+}
+
+/* =====================================================================
+   4. ОСТАЛЬНАЯ ТИПОГРАФИКА
+   ===================================================================== */
+h1, h2, h3 { text-wrap: balance; }
+h3 { font-weight: 700; }
+p, .msg, .hb-sub, .sec-sub, .about-text, .rt-sub, .gm-sub, .rv-sub, .card p, .iitem { line-height: 1.6; }
+.msg { line-height: 1.55; font-size: 14.5px; }
+.hb-sub, .hero p { font-weight: 450; }
+.sub, .badge, .lv-time, .rt-sub, .gm-sub { font-weight: 500; }
+.top b { letter-spacing: -0.02em; font-weight: 800; }
+
+.tbtn, .btn, .chip, .hb-pchip, .nav-cta, button { letter-spacing: -0.006em; }
+.tbtn { font-weight: 600; font-size: 13.5px; }
+.btn, .chip, .gm-btn, .rv-btn, .rt-go, .nav-cta { font-weight: 700; }
+.chip, .hb-pchip, .quick-tags a { font-weight: 600; }
+.badge b { letter-spacing: .08em; font-weight: 800; }
+.hb-region, .region-tag, .org-gis-tag { letter-spacing: .06em; font-weight: 700; }
+
+.ph, .card-number, .card-extra strong, .sos-num, .info-num, .hb-sos-btn,
+.lv-time, .lv-st, .gm-time, .gm-final, .gm-bar, .w-temp, .w-wind, #hbStatus,
+.rt-time, .rt-num, .rv-avg-n {
+  font-variant-numeric: tabular-nums;
+}
+input, textarea, select { letter-spacing: -0.004em; }
+input::placeholder, textarea::placeholder { font-weight: 400; opacity: .75; }
+
+.gis-icon .gl { font-family: var(--font) !important; font-weight: 800 !important; letter-spacing: -0.005em; }
+.leaflet-container, .leaflet-tooltip, .leaflet-popup-content { font-family: var(--font) !important; }
+
+/* кнопки быстрой смены языка */
+.langq, .lang-q {
+  background: var(--cd, transparent); border: 1px solid var(--bd, var(--border)); color: var(--ac, var(--accent));
+  height: 36px; padding: 0 12px; border-radius: 18px;
+  font-size: 12px; font-weight: 800; letter-spacing: .06em; cursor: pointer;
+}
+.lang-q { height: 38px; border-radius: 12px; font-size: 12.5px; background: transparent; }
+.langq:hover { background: var(--ac); color: #fff; border-color: var(--ac); }
+.lang-q:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+::selection { background: rgba(20, 184, 166, .35); }
+html { scroll-behavior: smooth; }
+
+/* =====================================================================
+   5. КНОПКИ «ЖИВЫЕ»: при наведении плавно уменьшаются, при нажатии «вдавливаются»
+   ===================================================================== */
+button, .btn, .tbtn, .chip, .hb-pchip, .quick-tags a, .nav-cta, .nav-links a,
+.gear, .langq, .lang-q, .inbtn, .gm-btn, .rv-btn, .rv-star, .rv-del, .rt-go, .rt-chip,
+.lv-act, .lv-fbtn, .hb-sos-btn, .gv-b, .gv-chip, .gis-tp-btn, .ph, .sw, .mob-burger,
+.brand, .top-brand, .logo, .hb-search button, .search-box button {
+  transition:
+    transform .38s cubic-bezier(.2, 1.35, .35, 1),
+    box-shadow .3s ease, background-color .22s ease, color .22s ease,
+    border-color .22s ease, filter .22s ease, opacity .2s ease;
+  will-change: transform;
+  -webkit-tap-highlight-color: transparent;
+}
+@media (hover: hover) {
+  button:not(:disabled):hover, .btn:hover, .tbtn:hover, .chip:hover, .hb-pchip:hover,
+  .quick-tags a:hover, .nav-cta:hover, .nav-links a:hover, .gear:hover, .langq:hover, .lang-q:hover,
+  .inbtn:hover, .gm-btn:hover, .rv-btn:hover, .rv-star:hover, .rv-del:hover, .rt-go:hover,
+  .rt-chip:hover, .lv-act:hover, .lv-fbtn:hover, .hb-sos-btn:hover, .gv-b:hover, .gv-chip:hover,
+  .gis-tp-btn:hover, .ph:hover, .sw:hover, .mob-burger:hover, .brand:hover, .top-brand:hover, .logo:hover {
+    transform: scale(.93);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .28), 0 0 0 3px rgba(20, 184, 166, .16);
+    filter: brightness(1.08) saturate(1.1);
+  }
+  .tbtn:hover { transform: scale(.96) translateX(3px); }
+  .brand:hover, .top-brand:hover, .logo:hover { box-shadow: none; filter: brightness(1.15); transform: scale(.92); }
+}
+button:not(:disabled):active, .btn:active, .tbtn:active, .chip:active, .hb-pchip:active,
+.quick-tags a:active, .nav-cta:active, .gear:active, .langq:active, .lang-q:active, .inbtn:active,
+.gm-btn:active, .rv-btn:active, .rt-go:active, .rt-chip:active, .lv-act:active, .lv-fbtn:active,
+.hb-sos-btn:active, .gv-b:active, .gv-chip:active, .gis-tp-btn:active, .ph:active, .sw:active,
+.mob-burger:active, .brand:active, .top-brand:active, .logo:active {
+  transform: scale(.86);
+  transition-duration: .12s;
+  box-shadow: none;
+  opacity: 1;
+}
+.brand:focus-visible, .top-brand:focus-visible, .logo:focus-visible, button:focus-visible {
+  outline: 2px solid var(--ac, var(--accent)); outline-offset: 3px; border-radius: 10px;
+}
+@media (prefers-reduced-motion: reduce) {
+  button, .btn, .tbtn, .chip, .brand, .top-brand, .logo { transition: none !important; }
+  button:hover, .btn:hover, .tbtn:hover, .chip:hover, .brand:hover { transform: none !important; }
+  html { scroll-behavior: auto; }
+}
+
+/* =====================================================================
+   6. ИКОНКИ С ПОДЛОЖКОЙ — чтобы не сливались с фоном
+   Подложка и рамка берут цвет самой иконки (currentColor), поэтому одинаково хорошо
+   видны на тёмном, светлом, бирюзовом и красном фоне.
+   ===================================================================== */
+svg.ic {
+  box-sizing: content-box;
+  width: 1.05em; height: 1.05em;
+  padding: .26em;
+  border-radius: .55em;
+  vertical-align: -.46em;
+  background: rgba(148, 163, 184, .2);
+  background: color-mix(in srgb, currentColor 16%, transparent);
+  box-shadow: inset 0 0 0 1px rgba(148, 163, 184, .28);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 26%, transparent);
+  stroke-width: 1.9;
+}
+/* где у иконки уже есть своя плашка — вторую не рисуем */
+.hb-cicon svg.ic, .c-icon svg.ic,
+button > svg.ic:only-child, .gear svg.ic, .mob-burger svg.ic, .ibar button svg.ic,
+.leaflet-container svg.ic {
+  background: none; box-shadow: none; padding: 0;
+  width: 1.15em; height: 1.15em; vertical-align: -.2em; border-radius: 0;
+}
+.hb-cicon svg.ic, .c-icon svg.ic { width: 1.1em; height: 1.1em; vertical-align: middle; }
+/* иконка погоды — крупная плашка */
+.w-icon svg.ic { padding: .3em; border-radius: .6em; width: 1em; height: 1em; vertical-align: middle; }
+.sdot { box-shadow: 0 0 0 .2em rgba(148, 163, 184, .2); }
+
+@media (max-width: 768px) {
+  .langq { height: 36px; padding: 0 10px; min-width: 44px; }
+}
+
+/* =====================================================================
+   7. index.html: логотип — две независимые кликабельные зоны
+      «Aqjar Digital» (наверх страницы) и «с. Талшык» (карта и организации)
+   ===================================================================== */
+.logo { cursor: default; display: flex; align-items: center; gap: 14px; }
+.logo-main, .logo-place {
+  cursor: pointer; border-radius: 10px; transform-origin: left center; will-change: transform;
+  transition: transform .38s cubic-bezier(.2, 1.35, .35, 1), filter .22s ease, color .22s ease;
+}
+.logo-main { display: inline-flex; align-items: center; gap: 12px; }
+.logo-name { font-size: 16px; font-weight: 800; letter-spacing: -0.04em; white-space: nowrap; }
+.logo-place {
+  font-size: 13px; font-weight: 500; color: var(--muted, #a9b8cc); white-space: nowrap;
+  padding-left: 14px; border-left: 1px solid var(--border, rgba(255,255,255,.13));
+}
+@media (hover: hover) {
+  /* сам контейнер больше не реагирует — только две его части */
+  .logo:hover { transform: none; filter: none; box-shadow: none; }
+  .logo-main:hover { transform: scale(.95); filter: brightness(1.15); }
+  .logo-place:hover { transform: scale(.95); color: var(--text, #f1f5f9); }
+}
+.logo:active { transform: none; filter: none; }
+.logo-main:active, .logo-place:active { transform: scale(.88); transition-duration: .12s; }
+.logo-main:focus-visible, .logo-place:focus-visible { outline: 2px solid var(--accent, #14b8a6); outline-offset: 3px; }
+html[lang="kk"] .logo-name { letter-spacing: -0.03em; }
+@media (max-width: 560px) { .logo { gap: 8px; } }
+
+/* =====================================================================
+   8. СПРАВОЧНИК («Важные службы»): одинаковые карточки и одинаковые «чипы» с номерами
+      заголовок → пояснение → номер (всегда на одной линии) → кнопка на всю ширину
+   ===================================================================== */
+#p2 .grid .card {
+  flex-direction: column; align-items: stretch; justify-content: space-between;
+  flex-wrap: nowrap; gap: 12px; padding: 16px;
+}
+#p2 .grid .card > div:first-child {
+  flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 3px;
+}
+#p2 .grid .card h3 { margin: 0; font-size: 15px; line-height: 1.25; }
+#p2 .grid .card p  { margin: 0; line-height: 1.4; }
+#p2 .grid .card > div:first-child > :nth-last-child(2) { margin-bottom: 8px; }
+
+/* номер: один и тот же размер/вид у всех, всегда в одну строку, прижат к низу блока */
+#p2 .grid .card .ph {
+  margin-top: auto; align-self: flex-start;
+  display: inline-flex; align-items: center; gap: 8px;
+  min-height: 30px; padding: 4px 11px; border-radius: 8px;
+  white-space: nowrap; font-size: 13px; line-height: 1;
+}
+/* иконка копирования внутри номера — без собственной плашки, чтобы не торчала */
+#p2 .grid .card .ph svg.ic {
+  background: none; box-shadow: none; padding: 0; border-radius: 0;
+  width: 1.05em; height: 1.05em; vertical-align: 0; opacity: .75;
+}
+#p2 .grid .card .ph:hover svg.ic { opacity: 1; }
+
+/* кнопка «Скопировать» — одной ширины и на одной высоте у всех карточек ряда */
+#p2 .grid .card > .btn {
+  width: 100%; min-height: 36px; padding: 8px 12px;
+  display: inline-flex; align-items: center; justify-content: center; text-align: center;
+}
+
+/* =====================================================================
+   9. ОЧЕНЬ УЗКИЕ ТЕЛЕФОНЫ (≤ 380px): шапка app.html не должна ломаться
+   ===================================================================== */
+@media (max-width: 380px) {
+  .top-brand { white-space: nowrap; font-size: 15px !important; }
+  .top > div:first-child > span { display: none; }        /* «● с. Талшык» — есть в меню и на главной */
+  .top > div:last-child { gap: 6px !important; }
+  .langq { min-width: 42px; padding: 0 8px; }
+  .hb-sos-btn { padding: 4px 8px; }
+}
