@@ -23,7 +23,7 @@
     { n: "🏫 ТСШ", pi: 14, open: 480, close: 1020, days: WD },
     { n: "🏫 БСШ", pi: 15, open: 480, close: 1020, days: WD },
     { n: "🏥 Районная больница", pi: 7, phone: "103", always: true },
-    { n: "🚓 РОВД (Полиция)", pi: 8, phone: "102", always: true },
+    { n: "🚓 Отдел полиции", pi: 8, phone: "102", always: true },
     { n: "🚆 Ж/д вокзал", pi: 9, phone: "105", always: true }
   ];
 
