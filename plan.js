@@ -231,7 +231,18 @@
       // А вот ВРЕМЯ считаем сами по нормальной скорости шага человека, а не доверяем
       // чужому «duration»: некоторые публичные роутеры на деле считают по машинной
       // скорости, из-за чего время похода пешком получалось нереально маленьким.
-      const meters = Math.round(r.distance);
+      let meters = Math.round(r.distance);
+      // роутер «прилипает» к ближайшей улице: дорисовываем и считаем отрезки от точных координат зданий до дороги
+      const dA = haversine(A, line[0]), dB = haversine(line[line.length - 1], B);
+      if (dA > 8) { line.unshift(A); meters += Math.round(dA); }
+      if (dB > 8) { line.push(B); meters += Math.round(dB); }
+      // проверка на здравый смысл: если путь по улицам намного длиннее прямой (здания рядом, но
+      // роутер повёл в обход квартала), идём напрямую — как ходят люди между соседними зданиями
+      const straight = haversine(A, B);
+      if (meters > straight * 1.7 + 150) {
+        const dm = Math.round(straight * 1.15);
+        return { minutes: Math.max(1, Math.ceil(dm / WALK_M_MIN)), meters: dm, line: [A, B], real: true, direct: true };
+      }
       const minutes = Math.max(1, Math.ceil(meters / WALK_M_MIN));
       return { minutes: minutes, meters: meters, line: line, real: true };
     } catch (e) {
@@ -305,8 +316,9 @@
         if (begin + task.d > P.close) ok = false;
       }
       if (!leg.real) note = (note ? note + " • " : "") + T("маршрут приблизительный (нет данных о дороге)", "бағыт болжамды (жол деректері жоқ)");
+      if (leg.direct) note = (note ? note + " • " : "") + T("здания рядом, путь напрямую", "ғимараттар жақын, жол тікелей");
       if (ok) {
-        steps.push({ task: task, walkMin: leg.minutes, walkM: leg.meters, line: leg.line, real: leg.real, begin: begin, end: begin + task.d, note: note, ok: true });
+        steps.push({ task: task, from: pos, walkMin: leg.minutes, walkM: leg.meters, line: leg.line, real: leg.real, begin: begin, end: begin + task.d, note: note, ok: true });
         t = begin + task.d;
         pos = task.p;
       } else {
@@ -437,15 +449,24 @@
 
     let html = '<div class="' + sumCls + '">' + sumTxt + '</div><div class="rt-out" style="margin-top:12px"><div>';
     let n = 0;
+    const norm = function(x) { return String(x).replace(/[^\p{L}\p{N}]+/gu, "").toLowerCase(); };
+    // «Откуда → Куда» (+ название дела, если оно не повторяет название места)
+    const stepTitle = function(s) {
+      const P = PLACES[s.task.p];
+      const same = (s.from === s.task.p);
+      let t = (s.from === undefined || same) ? P.n : labelOf(s.from) + " → " + P.n;
+      if (norm(P.n) !== norm(s.task.t)) t += " — " + s.task.t;
+      return t;
+    };
     best.steps.forEach(function(s) {
       const P = PLACES[s.task.p];
       if (s.ok) {
         n++;
         const distTxt = s.walkM ? " (~" + (s.walkM >= 1000 ? (s.walkM / 1000).toFixed(1) + " км" : s.walkM + " м") + ")" : "";
-        html += '<div class="rt-step"><div class="rt-num">' + n + '</div><div><div><span class="rt-time">' + hm(s.begin) + '</span> ' + P.n + ' — ' + s.task.t + '</div>' +
+        html += '<div class="rt-step"><div class="rt-num">' + n + '</div><div><div><span class="rt-time">' + hm(s.begin) + '</span> ' + stepTitle(s) + '</div>' +
           '<div class="rt-note">' + (s.walkMin ? T("пешком по улицам ~", "көшелер бойымен жаяу ~") + s.walkMin + T(" мин", " мин") + distTxt + T(" • ", " • ") : "") + T("визит ~", "бару ~") + s.task.d + T(" мин", " мин") + (s.note ? " • " + s.note : "") + '</div></div></div>';
       } else {
-        html += '<div class="rt-step fail"><div class="rt-num">!</div><div><div>' + P.n + ' — ' + s.task.t + '</div><div class="rt-note">' + s.note + '</div></div></div>';
+        html += '<div class="rt-step fail"><div class="rt-num">!</div><div><div>' + stepTitle(s) + '</div><div class="rt-note">' + s.note + '</div></div></div>';
       }
     });
     html += '<div class="rt-note" style="margin-top:8px">' + T("Маршрут и время построены по реальным улицам (OpenStreetMap / OSRM). Время визита — ориентировочное; перед поездкой уточняйте график по телефону.", "Бағыт пен уақыт нақты көшелер бойынша құрылған (OpenStreetMap / OSRM).") + '</div></div>';

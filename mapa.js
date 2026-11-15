@@ -315,7 +315,9 @@
           const snapStart = pts[0];
           const gapEnd = map.distance(snapEnd, p.ll);
           const gapStart = map.distance(snapStart, start);
-          if (gapEnd > 150 || gapStart > 150 || rt.distance > straight * 2.5 + 400) throw new Error("bad_route");
+          if (gapEnd > 150 || gapStart > 150) throw new Error("bad_route");
+          // здания рядом, а роутер повёл в обход квартала — идём напрямую (пешком порог строже, чем на машине)
+          if (rt.distance > (mode === "foot" ? straight * 1.7 + 150 : straight * 2.5 + 400)) throw new Error("detour");
           const dashed = { color: "#f59e0b", weight: 4, dashArray: "6 8" };
           const layers = [
             L.polyline(pts, { color: "#ffffff", weight: 9, opacity: 0.85 }),
@@ -333,13 +335,18 @@
           animateWalker(pts.concat([p.ll]));
           setInfo((mode === "car" ? tx("🚗 На машине по улицам: ", "🚗 Көлікпен көшелер бойынша: ") : tx("🚶 Пешком по улицам: ", "🚶 Жаяу көшелер бойынша: ")) +
             fmtDist(rt.distance) + tx(", примерно ", ", шамамен ") + fmtTime(rt.duration) + tx(" • вы определены с точностью ±", " • дәлдік ±") + acc + " м");
-        }).catch(function() {
+        }).catch(function(e) {
           clearRoute();
           routeLayer = L.layerGroup([
             L.polyline([start, p.ll], { color: "#f59e0b", weight: 4, dashArray: "8 8" }),
             me()
           ]).addTo(map);
           map.fitBounds(L.latLngBounds([start, p.ll]), { padding: [50, 50], maxZoom: 17 });
+          if (e && e.message === "detour") {
+            setInfo(tx("Здание рядом, а по улицам выходит большой крюк — показан прямой путь: ", "Ғимарат жақын, ал көшемен үлкен айналма шығады — тік жол көрсетілді: ") + fmtDist(straight) +
+              (mode === "foot" ? tx(", примерно ", ", шамамен ") + fmtTime(straight * 1.15 / 1.35) : "") + ".");
+            return;
+          }
           setInfo(tx("Дороги к этому объекту на карте OpenStreetMap проложены неполно (или сервис недоступен). Показана прямая: ", "Бұл нысанға жол картада толық салынбаған (немесе сервис қолжетімсіз). Түзу сызық көрсетілді: ") + fmtDist(straight) + ".");
         });
       }, function(err) {
