@@ -1,7 +1,7 @@
 (function() {
   // Единый общий чат жителей. Подключать в app.html ПОСЛЕ hub.js (рядом с остальными скриптами).
   // Переводится только интерфейс (RU/KZ). Сообщения и ники пользователей НЕ переводятся.
-  const API_URL = "https://script.google.com/macros/s/AKfycbzPsFbMp-g9Y6NgGdjmI6bU1PX0iH_kSHDhiumBeeXqK5ONJ9UpMZFJssPeBk4uWWxZ/exec";
+  const API_URL = "https://script.google.com/macros/s/AKfycbz4StD4FMZMEODEisoEl2p-BY858lDbUkvY1ed0CGlNGwP1vIPn2SmqSPHSfsFuQSFv/exec";
   const POLL_MS = 5000;
   const MAX_LEN = 300;
 
@@ -432,6 +432,13 @@
   document.querySelectorAll('input[name="t"]').forEach(function(r) {
     r.addEventListener("change", function() { if (r20.checked) poll(true); });
   });
+
+  // при включении/выключении режима админа сразу перерисовываем чат (без ожидания опроса)
+  const prevDraw = window.draw;
+  window.draw = function() {
+    if (typeof prevDraw === "function") prevDraw.apply(this, arguments);
+    try { render(lastList, true); } catch (e) {}
+  };
 
   applyLang();
   loadMe();
