@@ -20,8 +20,8 @@
     { n: "🏦 Казначейство", pi: 11, open: 540, close: 1110, days: WD, lunch: LUNCH },
     { n: "🧪 Управление СЭС", pi: 12, phone: "+7 (71546) 2-19-17", open: 540, close: 1110, days: WD, lunch: LUNCH },
     { n: "📊 Отдел статистики", pi: 13, open: 540, close: 1110, days: WD, lunch: LUNCH },
-    { n: "🏫 ТСШ", pi: 14, open: 480, close: 1020, days: WD },
-    { n: "🏫 БСШ", pi: 15, open: 480, close: 1020, days: WD },
+    { n: "🏫 ТСШ", pi: 14, open: 480, close: 1200, days: WD },
+    { n: "🏫 БСШ", pi: 15, open: 480, close: 1200, days: WD },
     { n: "🏥 Районная больница", pi: 7, phone: "103", always: true },
     { n: "🚓 Отдел полиции", pi: 8, phone: "102", always: true },
     { n: "🚆 Ж/д вокзал", pi: 9, phone: "105", always: true }
