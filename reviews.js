@@ -2,7 +2,7 @@
   // Подключать ПОСЛЕ hub.js (в app.html: <script src="reviews.js"></script>)
 
   // ВСТАВЬТЕ СЮДА URL веб-приложения Google Apps Script (заканчивается на /exec)
-  const API_URL = "https://script.google.com/macros/s/AKfycbzGgfd5Stk_RQAQp9MECh5wqVyWhTPGPGetBaMCl6UyX4j0Mrcg_iU076TDbmsacr4C/exec";
+  const API_URL = "https://script.google.com/macros/s/AKfycbztJbHjDPy_s050OnXYnivD29iWoa2qovpoAomkIo4EVPZ1ZKSFDyAVoYIRLWrZHjSa/exec";
 
   const r1 = document.getElementById("r1");
   const menu = document.querySelector(".side .menu");
@@ -213,6 +213,7 @@
       bad_stars: T("Сначала поставьте оценку от 1 до 5 звёзд.", "Алдымен 1-ден 5-ке дейін баға қойыңыз."),
       admin_pass_not_configured: T("Пароль удаления ещё не настроен в Apps Script (ADMIN_PASS).", "Жою құпиясөзі (ADMIN_PASS) әлі орнатылмаған."),
       wrong_pass: T("Неверный пароль модератора.", "Модератор құпиясөзі қате."),
+      not_owner: T("Можно удалить только свой отзыв.", "Тек өз пікіріңізді жоюға болады."),
       no_id: T("Не удалось определить отзыв.", "Пікір анықталмады."),
       not_found: T("Отзыв не найден (возможно, уже удалён).", "Пікір табылмады (мүмкін, әлдеқашан жойылған)."),
       api_not_configured: T("В reviews.js не вставлен URL сервера.", "reviews.js файлына сервер URL-і енгізілмеген."),
@@ -283,12 +284,14 @@
       d.className = "rv-date";
       d.textContent = x.date || "";
       it.appendChild(d);
-      if (isAdmin() && x.id) {
+      // удалять может админ (любой отзыв) или автор (только свой: x.mine приходит с сервера)
+      if (x.id && (isAdmin() || x.mine)) {
         const del = document.createElement("button");
         del.type = "button";
         del.className = "rv-del";
-        del.textContent = T("🗑 Удалить", "🗑 Жою");
-        del.onclick = function() { deleteReview(x.id); };
+        const asAdmin = isAdmin();
+        del.textContent = (!asAdmin && x.mine) ? T("🗑 Удалить мой отзыв", "🗑 Пікірімді жою") : T("🗑 Удалить", "🗑 Жою");
+        del.onclick = function() { if (asAdmin) deleteReview(x.id); else deleteOwnReview(x.id); };
         it.appendChild(del);
       }
       list.appendChild(it);
@@ -385,6 +388,24 @@
         await load();
       } else {
         try { sessionStorage.removeItem("aqjar_adm_pass"); } catch (e) {}
+        alert((j && j.error ? errText(j.error) : T("Не удалось удалить отзыв.", "Пікірді жою мүмкін болмады.")));
+      }
+    } catch (e) {
+      alert(errText(String(e.message || e)));
+    }
+  }
+
+  // ---------- удаление своего отзыва (автор) ----------
+  // Сервер сам проверяет, что отзыв принадлежит этому uid; чужой удалить нельзя.
+  async function deleteOwnReview(id) {
+    if (!apiReady()) return;
+    if (!window.confirm(T("Удалить ваш отзыв?", "Пікіріңізді жою керек пе?"))) return;
+    try {
+      const j = await apiCall({ action: "delete_own", id: id, uid: myUid });
+      if (j && j.ok) {
+        if (typeof toast === "function") toast("🗑 " + T("Отзыв удалён", "Пікір жойылды"));
+        await load();
+      } else {
         alert((j && j.error ? errText(j.error) : T("Не удалось удалить отзыв.", "Пікірді жою мүмкін болмады.")));
       }
     } catch (e) {
