@@ -1,7 +1,7 @@
 (function() {
   // Единый общий чат жителей. Подключать в app.html ПОСЛЕ hub.js (рядом с остальными скриптами).
   // Переводится только интерфейс (RU/KZ). Сообщения и ники пользователей НЕ переводятся.
-  const API_URL = "https://script.google.com/macros/s/AKfycbz4StD4FMZMEODEisoEl2p-BY858lDbUkvY1ed0CGlNGwP1vIPn2SmqSPHSfsFuQSFv/exec";
+  const API_URL = "https://script.google.com/macros/s/AKfycbwMlybRapJwBYwnQVMOo6UZjnz9NIW1O-oTxVjJq_SAl4gkAAbmXz6COAWN9yfNxiXB/exec";
   const POLL_MS = 5000;
   const MAX_LEN = 300;
 
@@ -11,11 +11,19 @@
   if (!r1 || !menu || !main) return;
 
   // отдельный id пользователя для чата (не совпадает с id в «Идеях»)
-  let uid = localStorage.getItem("aqjar_chat_uid");
-  if (!uid) {
-    uid = "c_" + Math.random().toString(36).slice(2, 12) + Date.now().toString(36);
-    localStorage.setItem("aqjar_chat_uid", uid);
+  // хранится сразу в двух местах (localStorage + cookie на 2 года): если очистить одно, id восстановится из другого
+  function readCookieUid() {
+    const m = document.cookie.match(/(?:^|; )aqjar_chat_uid=([^;]+)/);
+    return m ? decodeURIComponent(m[1]) : "";
   }
+  let uid = "";
+  try { uid = localStorage.getItem("aqjar_chat_uid") || ""; } catch (e) {}
+  if (!uid) uid = readCookieUid();
+  if (!uid || uid.length > 80) {
+    uid = "c_" + Math.random().toString(36).slice(2, 12) + Date.now().toString(36);
+  }
+  try { localStorage.setItem("aqjar_chat_uid", uid); } catch (e) {}
+  try { document.cookie = "aqjar_chat_uid=" + encodeURIComponent(uid) + "; max-age=63072000; path=/; SameSite=Lax"; } catch (e) {}
 
   const T = function(ru, kz) { return (typeof lang !== "undefined" && lang === "kz") ? kz : ru; };
 
@@ -29,6 +37,7 @@
     auth: ["Неверный пароль администратора", "Әкімші құпиясөзі қате"],
     banned: ["Вы заблокированы администратором", "Сіз әкімшімен бұғатталғансыз"],
     muted: ["Вы в муте — писать в чат нельзя", "Сіз мутта — чатқа жазуға болмайды"],
+    punished: ["Пока действует наказание, менять ник нельзя", "Жаза әрекет еткенше никті өзгертуге болмайды"],
     not_found: ["Не найдено", "Табылмады"],
     net: ["Нет связи с сервером", "Сервермен байланыс жоқ"]
   };
@@ -83,6 +92,15 @@
     .cr-mod button:hover { border-color: var(--ac); color: var(--ac); }
     .cr-mod .cr-mod-cancel { text-align: center; color: var(--mt); }
     .cr-banrow small { color: var(--mt); display: block; font-weight: 400; }
+    .cr-dots { background: none; border: none; color: var(--mt); cursor: pointer; font-size: 20px; line-height: 1; padding: 0 6px; font-weight: 800; }
+    .cr-dots:hover { color: var(--ac); }
+    .cr-pop { position: fixed; z-index: 3000; background: var(--cd); border: 1px solid var(--bd); border-radius: 14px; padding: 10px; width: min(280px, calc(100vw - 16px)); box-shadow: 0 10px 30px rgba(0,0,0,.45); display: flex; flex-direction: column; gap: 8px; }
+    .cr-pop h4 { font-size: 13px; overflow-wrap: anywhere; }
+    .cr-pop .lb { font-size: 11px; color: var(--mt); font-weight: 700; margin-bottom: 4px; }
+    .cr-pop .row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .cr-pop button { background: var(--in); border: 1px solid var(--bd); color: var(--tx); border-radius: 9px; padding: 6px 10px; font-size: 12px; font-weight: 600; cursor: pointer; min-height: 0; }
+    .cr-pop button:hover { border-color: var(--ac); color: var(--ac); }
+    .cr-pop .un { width: 100%; text-align: left; }
     @media(max-width:768px),(max-height:480px){
       #p20{display:none;flex-direction:column}
       #r20:checked~.main #p20{display:flex !important}
@@ -151,7 +169,7 @@
     $("crNickBtn").textContent = T("Сохранить", "Сақтау");
     $("crChange").textContent = T("✏️ Сменить ник (1 раз)", "✏️ Никті өзгерту (1 рет)");
 
-    $("crBanSum").textContent = T("🚫 Заблокированные пользователи", "🚫 Бұғатталған пайдаланушылар");
+    $("crBanSum").textContent = T("🔇 Наказания: муты и баны", "🔇 Жазалар: мут және бан");
     if (me.banned) $("crBanned").textContent = errText("banned") + " (" + untilText(me.until) + ")";
     else if (me.muted) $("crBanned").textContent = "🔇 " + errText("muted") + " (" + untilText(me.until) + ")";
     $("crBanned").style.display = (me.banned || me.muted) ? "" : "none";
@@ -160,7 +178,7 @@
     $("crNickBox").style.display = (!me.banned && (!me.nick || editing)) ? "flex" : "none";
     $("crInp").disabled = !canWrite();
     $("crSend").disabled = !canWrite();
-    const canChange = hasNick && me.changes < 1 && !editing;
+    const canChange = hasNick && me.changes < 1 && !editing && !me.muted;
     $("crChange").style.display = canChange ? "" : "none";
 
     const meEl = $("crMe");
@@ -190,6 +208,7 @@
     lastSig = sig;
     lastList = list;
 
+    closeMenu();
     const box = $("crList");
     const nearBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
     box.innerHTML = "";
@@ -217,9 +236,9 @@
         head.appendChild(d);
         if (!m.m) {
           const bb = document.createElement("button");
-          bb.type = "button"; bb.className = "cr-ban-btn"; bb.textContent = "🚫";
-          bb.title = T("Мут / бан автора", "Автор: мут / бан");
-          bb.onclick = function() { openMod(m.id, m.n); };
+          bb.type = "button"; bb.className = "cr-dots"; bb.textContent = "⋯";
+          bb.title = T("Наказания: мут / бан", "Жазалар: мут / бан");
+          bb.onclick = function(ev) { ev.stopPropagation(); openMod(m.id, m.n, bb); };
           head.appendChild(bb);
         }
       }
@@ -259,7 +278,7 @@
 
   async function poll(force) {
     if (!apiOk()) return;
-    if ((me.banned || me.muted) && me.until > 0 && Date.now() >= me.until) loadMe();
+    if (me.banned || me.muted) loadMe();
     if (!force && (!r20.checked || document.hidden)) return;
     try {
       const d = await get({ action: "list", uid: uid });
@@ -326,38 +345,71 @@
     } catch (e) { say(errText("net")); }
   }
 
-  // меню модерации: мут 30 мин / навсегда, бан на время / навсегда
-  function openMod(id, nick) {
-    const bg = document.createElement("div");
-    bg.className = "cr-mod-bg";
+  // выпадающее меню «⋯» рядом с сообщением: мут / бан на время или навсегда, снять мут
+  let popEl = null;
+  function closeMenu() { if (popEl) { popEl.remove(); popEl = null; } }
+
+  function openMod(id, nick, anchor) {
+    if (popEl && popEl._anchor === anchor) { closeMenu(); return; }
+    closeMenu();
     const box = document.createElement("div");
-    box.className = "cr-mod";
+    box.className = "cr-pop";
+    box._anchor = anchor;
     const h = document.createElement("h4");
-    h.textContent = T("Модерация: ", "Модерация: ") + nick;
+    h.textContent = nick;                      // ник — как есть
     box.appendChild(h);
-    const close = function() { bg.remove(); };
-    const items = [
-      ["🔇 " + T("Мут на 30 минут", "30 минутқа мут"), "mute", 30],
-      ["🔇 " + T("Мут навсегда", "Мәңгілікке мут"), "mute", 0],
-      ["⏱ " + T("Бан на 1 час", "1 сағатқа бан"), "ban", 60],
-      ["⏱ " + T("Бан на 24 часа", "24 сағатқа бан"), "ban", 1440],
-      ["⏱ " + T("Бан на 7 дней", "7 күнге бан"), "ban", 10080],
-      ["🚫 " + T("Бан навсегда", "Мәңгілікке бан"), "ban", 0]
+
+    const PRESETS = [
+      [10, "10 мин", "10 мин"],
+      [60, "1 час", "1 сағ"],
+      [1440, "24 часа", "24 сағ"],
+      [10080, "7 дней", "7 күн"],
+      [0, "∞ навсегда", "∞ мәңгі"]
     ];
-    items.forEach(function(it) {
-      const b = document.createElement("button");
-      b.type = "button"; b.textContent = it[0];
-      b.onclick = function() { close(); doMod(it[1], id, it[2]); };
-      box.appendChild(b);
-    });
-    const c = document.createElement("button");
-    c.type = "button"; c.className = "cr-mod-cancel"; c.textContent = T("Отмена", "Болдырмау");
-    c.onclick = close;
-    box.appendChild(c);
-    bg.appendChild(box);
-    bg.addEventListener("click", function(e) { if (e.target === bg) close(); });
-    document.body.appendChild(bg);
+    function section(icon, ru, kz, action) {
+      const wrap = document.createElement("div");
+      const lb = document.createElement("div");
+      lb.className = "lb"; lb.textContent = icon + " " + T(ru, kz);
+      const row = document.createElement("div");
+      row.className = "row";
+      PRESETS.forEach(function(p) {
+        const btn = document.createElement("button");
+        btn.type = "button"; btn.textContent = T(p[1], p[2]);
+        btn.onclick = function() {
+          if (p[0] === 0 && !window.confirm(T("Выдать «", "Беру «") + nick + T("» наказание навсегда?", "» мәңгілікке жаза?"))) return;
+          closeMenu();
+          doMod(action, id, p[0]);
+        };
+        row.appendChild(btn);
+      });
+      wrap.appendChild(lb); wrap.appendChild(row);
+      return wrap;
+    }
+    box.appendChild(section("🔇", "Мут (нельзя писать)", "Мут (жазуға болмайды)", "mute"));
+    box.appendChild(section("🚫", "Бан (нельзя писать, сообщения скрыты)", "Бан (жазуға болмайды, хабарламалар жасырын)", "ban"));
+    const un = document.createElement("button");
+    un.type = "button"; un.className = "un";
+    un.textContent = "🔊 " + T("Снять мут", "Мутты алу");
+    un.onclick = function() { closeMenu(); doMod("unmute", id, 0); };
+    box.appendChild(un);
+
+    document.body.appendChild(box);
+    popEl = box;
+    // позиция рядом с кнопкой, не выходя за экран
+    const r = anchor.getBoundingClientRect();
+    const w = box.offsetWidth, hgt = box.offsetHeight;
+    let left = Math.min(Math.max(8, r.right - w), window.innerWidth - w - 8);
+    let top = r.bottom + 4;
+    if (top + hgt > window.innerHeight - 8) top = Math.max(8, r.top - hgt - 4);
+    box.style.left = left + "px";
+    box.style.top = top + "px";
   }
+  document.addEventListener("click", function(e) {
+    if (popEl && !popEl.contains(e.target)) closeMenu();
+  });
+  document.addEventListener("keydown", function(e) { if (e.key === "Escape") closeMenu(); });
+  window.addEventListener("scroll", closeMenu, true);
+  window.addEventListener("resize", closeMenu);
 
   async function doMod(action, id, minutes) {
     const pass = getPass();
@@ -369,7 +421,9 @@
         say(errText(d.error));
         return;
       }
-      say((action === "mute" ? "🔇 " + T("Мут выдан", "Мут берілді") : "🚫 " + T("Заблокирован", "Бұғатталды")));
+      say(action === "mute" ? "🔇 " + T("Мут выдан", "Мут берілді")
+        : action === "ban" ? "🚫 " + T("Заблокирован", "Бұғатталды")
+        : "🔊 " + T("Мут снят", "Мут алынды"));
       poll(true);
       loadBans();
     } catch (e) { say(errText("net")); }
